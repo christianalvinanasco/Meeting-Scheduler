@@ -57,6 +57,9 @@ export default {
           approved: "#10B981",
           rejected: "#EF4444",
         },
+        brand: {
+          red: "#FF0000",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

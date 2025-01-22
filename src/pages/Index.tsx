@@ -1,70 +1,102 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Video, Users } from "lucide-react";
+import { Calendar, Video, Users, PlayCircle } from "lucide-react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 const Index = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Add proper authentication logic here
+    setIsLoggedIn(true);
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100">
+        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+          <div className="flex flex-col justify-center space-y-6">
+            <img 
+              src="/lovable-uploads/18722f91-71bf-4dff-9807-b97ef0203119.png" 
+              alt="ML Logo" 
+              className="h-12 object-contain mb-8"
+            />
+            <div className="space-y-6 max-w-md">
+              <h2 className="text-xl font-semibold">Please enter your credentials</h2>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <Input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full"
+                />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full"
+                />
+                <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
+                  Log-in
+                </Button>
+              </form>
+            </div>
+          </div>
+          <div className="hidden md:block">
+            <img 
+              src="/lovable-uploads/b30f4a31-54bb-4778-bc05-2f7195fcbfcd.png"
+              alt="ML Payroll"
+              className="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <DashboardLayout>
-      <div className="space-y-8 animate-fadeIn">
-        <header className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">Welcome back</h1>
-          <p className="text-muted-foreground">
-            Here's what's happening with your meetings today.
+      <div className="space-y-12 animate-fadeIn">
+        <header className="text-center space-y-4">
+          <h1 className="text-6xl font-bold text-red-600">WELCOME!</h1>
+          <p className="text-2xl text-gray-600">
+            How can I support you today?
           </p>
         </header>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card className="p-6 space-y-4 transition-all hover:shadow-lg">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">Upcoming Meetings</h3>
-              <Calendar className="w-5 h-5 text-muted-foreground" />
-            </div>
-            <p className="text-3xl font-bold">3</p>
-            <Button variant="outline" className="w-full">View Schedule</Button>
-          </Card>
-
-          <Card className="p-6 space-y-4 transition-all hover:shadow-lg">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">New Videos</h3>
-              <Video className="w-5 h-5 text-muted-foreground" />
-            </div>
-            <p className="text-3xl font-bold">5</p>
-            <Button variant="outline" className="w-full">Watch Now</Button>
-          </Card>
-
-          <Card className="p-6 space-y-4 transition-all hover:shadow-lg">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">Active Users</h3>
-              <Users className="w-5 h-5 text-muted-foreground" />
-            </div>
-            <p className="text-3xl font-bold">12</p>
-            <Button variant="outline" className="w-full">View Details</Button>
-          </Card>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
-                  <div className="w-2 h-2 rounded-full bg-status-pending" />
-                  <div>
-                    <p className="font-medium">New meeting request</p>
-                    <p className="text-sm text-muted-foreground">2 minutes ago</p>
-                  </div>
-                </div>
-              ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <Card className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group">
+            <div className="flex flex-col items-center space-y-4">
+              <Video className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl font-semibold">Schedule a virtual demo</h3>
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-            <div className="grid gap-4">
-              <Button>Schedule Meeting</Button>
-              <Button variant="outline">Upload Video</Button>
-              <Button variant="outline">View Reports</Button>
+          <Card className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group">
+            <div className="flex flex-col items-center space-y-4">
+              <Calendar className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl font-semibold">Check meeting schedules</h3>
+            </div>
+          </Card>
+
+          <Card className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group">
+            <div className="flex flex-col items-center space-y-4">
+              <Users className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl font-semibold">Track referral status</h3>
+            </div>
+          </Card>
+
+          <Card className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group">
+            <div className="flex flex-col items-center space-y-4">
+              <PlayCircle className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl font-semibold">ML Payroll PRO Virtual Walkthrough</h3>
             </div>
           </Card>
         </div>
