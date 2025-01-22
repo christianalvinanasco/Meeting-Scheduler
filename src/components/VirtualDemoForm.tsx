@@ -4,6 +4,8 @@ import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const timeSlots = [
   "9:00 - 10:30",
@@ -14,6 +16,8 @@ const timeSlots = [
 ];
 
 export const VirtualDemoForm = ({ onClose }: { onClose: () => void }) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     companyName: "",
     contactPerson: "",
@@ -27,8 +31,27 @@ export const VirtualDemoForm = ({ onClose }: { onClose: () => void }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    // Here you would typically send the data to your backend
+    
+    // Get existing meetings from localStorage or initialize empty array
+    const existingMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
+    
+    // Add new meeting to array
+    const newMeeting = {
+      ...formData,
+      id: Date.now(),
+      status: "Pending",
+      dateSubmitted: new Date().toLocaleDateString()
+    };
+    
+    localStorage.setItem("meetings", JSON.stringify([...existingMeetings, newMeeting]));
+    
+    toast({
+      title: "Success!",
+      description: "Meeting request submitted successfully",
+    });
+    
     onClose();
+    navigate("/check-meetings");
   };
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

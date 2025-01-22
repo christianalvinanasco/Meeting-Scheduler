@@ -5,6 +5,8 @@ import { Calendar, Video, Users, PlayCircle } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { VirtualDemoForm } from "@/components/VirtualDemoForm";
+import { MeetingSchedules } from "@/components/MeetingSchedules";
+import { VideoUploadForm } from "@/components/VideoUploadForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const Index = () => {
@@ -12,38 +14,14 @@ const Index = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showDemoForm, setShowDemoForm] = useState(false);
+  const [showMeetings, setShowMeetings] = useState(false);
+  const [showReferrals, setShowReferrals] = useState(false);
+  const [showVideoUpload, setShowVideoUpload] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggedIn(true);
   };
-
-  const referralData = [
-    {
-      companyName: "ABC Corp",
-      status: "Onboarded",
-      dateOnboarded: "01/31/2025",
-      dateStarted: ""
-    },
-    {
-      companyName: "123 Finance",
-      status: "Please follow up for company details",
-      dateOnboarded: "",
-      dateStarted: ""
-    },
-    {
-      companyName: "J1 Construction",
-      status: "System User",
-      dateOnboarded: "01/31/2025",
-      dateStarted: "02/01/2025"
-    },
-    {
-      companyName: "Agila Tracking Corp",
-      status: "Fully Compliant",
-      dateOnboarded: "01/31/2025",
-      dateStarted: "02/01/2025"
-    }
-  ];
 
   if (!isLoggedIn) {
     return (
@@ -111,48 +89,30 @@ const Index = () => {
             </div>
           </Card>
 
-          <Card className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group">
+          <Card 
+            className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
+            onClick={() => setShowMeetings(true)}
+          >
             <div className="flex flex-col items-center space-y-4">
               <Calendar className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
               <h3 className="text-xl font-semibold">Check meeting schedules</h3>
             </div>
           </Card>
 
-          <Card className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group">
+          <Card 
+            className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
+            onClick={() => setShowReferrals(true)}
+          >
             <div className="flex flex-col items-center space-y-4">
               <Users className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
               <h3 className="text-xl font-semibold">Track referral status</h3>
-              <div className="w-full overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="bg-red-600 text-white">
-                      <th className="p-2">Company Name</th>
-                      <th className="p-2">Status</th>
-                      <th className="p-2">Date onboarded</th>
-                      <th className="p-2">Date started</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {referralData.map((item, index) => (
-                      <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
-                        <td className="p-2">{item.companyName}</td>
-                        <td className="p-2">{item.status}</td>
-                        <td className="p-2">{item.dateOnboarded}</td>
-                        <td className="p-2">{item.dateStarted}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="text-right mt-4">
-                  <Button variant="link" className="text-green-600">
-                    Generate Excel Report
-                  </Button>
-                </div>
-              </div>
             </div>
           </Card>
 
-          <Card className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group">
+          <Card 
+            className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
+            onClick={() => setShowVideoUpload(true)}
+          >
             <div className="flex flex-col items-center space-y-4">
               <PlayCircle className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
               <h3 className="text-xl font-semibold">ML Payroll PRO Virtual Walkthrough</h3>
@@ -166,6 +126,79 @@ const Index = () => {
               <DialogTitle>Schedule a Virtual Demo</DialogTitle>
             </DialogHeader>
             <VirtualDemoForm onClose={() => setShowDemoForm(false)} />
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showMeetings} onOpenChange={setShowMeetings}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>Meeting Schedules</DialogTitle>
+            </DialogHeader>
+            <MeetingSchedules />
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showReferrals} onOpenChange={setShowReferrals}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>Referral Status</DialogTitle>
+            </DialogHeader>
+            <div className="p-6">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-red-600 text-white">
+                    <th className="p-2">Company Name</th>
+                    <th className="p-2">Status</th>
+                    <th className="p-2">Date onboarded</th>
+                    <th className="p-2">Date started</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    {
+                      companyName: "ABC Corp",
+                      status: "Onboarded",
+                      dateOnboarded: "01/31/2025",
+                      dateStarted: ""
+                    },
+                    {
+                      companyName: "123 Finance",
+                      status: "Please follow up for company details",
+                      dateOnboarded: "",
+                      dateStarted: ""
+                    },
+                    {
+                      companyName: "J1 Construction",
+                      status: "System User",
+                      dateOnboarded: "01/31/2025",
+                      dateStarted: "02/01/2025"
+                    },
+                    {
+                      companyName: "Agila Tracking Corp",
+                      status: "Fully Compliant",
+                      dateOnboarded: "01/31/2025",
+                      dateStarted: "02/01/2025"
+                    }
+                  ].map((item, index) => (
+                    <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                      <td className="p-2">{item.companyName}</td>
+                      <td className="p-2">{item.status}</td>
+                      <td className="p-2">{item.dateOnboarded}</td>
+                      <td className="p-2">{item.dateStarted}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Upload Video Material</DialogTitle>
+            </DialogHeader>
+            <VideoUploadForm />
           </DialogContent>
         </Dialog>
       </div>
