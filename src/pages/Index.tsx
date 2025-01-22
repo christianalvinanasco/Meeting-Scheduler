@@ -4,17 +4,46 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Video, Users, PlayCircle } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { VirtualDemoForm } from "@/components/VirtualDemoForm";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showDemoForm, setShowDemoForm] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Add proper authentication logic here
     setIsLoggedIn(true);
   };
+
+  const referralData = [
+    {
+      companyName: "ABC Corp",
+      status: "Onboarded",
+      dateOnboarded: "01/31/2025",
+      dateStarted: ""
+    },
+    {
+      companyName: "123 Finance",
+      status: "Please follow up for company details",
+      dateOnboarded: "",
+      dateStarted: ""
+    },
+    {
+      companyName: "J1 Construction",
+      status: "System User",
+      dateOnboarded: "01/31/2025",
+      dateStarted: "02/01/2025"
+    },
+    {
+      companyName: "Agila Tracking Corp",
+      status: "Fully Compliant",
+      dateOnboarded: "01/31/2025",
+      dateStarted: "02/01/2025"
+    }
+  ];
 
   if (!isLoggedIn) {
     return (
@@ -22,9 +51,9 @@ const Index = () => {
         <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
           <div className="flex flex-col justify-center space-y-6">
             <img 
-              src="/lovable-uploads/18722f91-71bf-4dff-9807-b97ef0203119.png" 
+              src="/lovable-uploads/04bf138c-8fee-4b16-8631-c3deaf4806c2.png" 
               alt="ML Logo" 
-              className="h-12 object-contain mb-8"
+              className="h-24 object-contain mb-8"
             />
             <div className="space-y-6 max-w-md">
               <h2 className="text-xl font-semibold">Please enter your credentials</h2>
@@ -51,7 +80,7 @@ const Index = () => {
           </div>
           <div className="hidden md:block">
             <img 
-              src="/lovable-uploads/b30f4a31-54bb-4778-bc05-2f7195fcbfcd.png"
+              src="/lovable-uploads/b894b7d3-4cad-409d-b076-092346bb35d2.png"
               alt="ML Payroll"
               className="w-full h-full object-cover rounded-lg"
             />
@@ -72,7 +101,10 @@ const Index = () => {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <Card className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group">
+          <Card 
+            className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
+            onClick={() => setShowDemoForm(true)}
+          >
             <div className="flex flex-col items-center space-y-4">
               <Video className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
               <h3 className="text-xl font-semibold">Schedule a virtual demo</h3>
@@ -90,6 +122,33 @@ const Index = () => {
             <div className="flex flex-col items-center space-y-4">
               <Users className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
               <h3 className="text-xl font-semibold">Track referral status</h3>
+              <div className="w-full overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-red-600 text-white">
+                      <th className="p-2">Company Name</th>
+                      <th className="p-2">Status</th>
+                      <th className="p-2">Date onboarded</th>
+                      <th className="p-2">Date started</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referralData.map((item, index) => (
+                      <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                        <td className="p-2">{item.companyName}</td>
+                        <td className="p-2">{item.status}</td>
+                        <td className="p-2">{item.dateOnboarded}</td>
+                        <td className="p-2">{item.dateStarted}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="text-right mt-4">
+                  <Button variant="link" className="text-green-600">
+                    Generate Excel Report
+                  </Button>
+                </div>
+              </div>
             </div>
           </Card>
 
@@ -100,6 +159,15 @@ const Index = () => {
             </div>
           </Card>
         </div>
+
+        <Dialog open={showDemoForm} onOpenChange={setShowDemoForm}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Schedule a Virtual Demo</DialogTitle>
+            </DialogHeader>
+            <VirtualDemoForm onClose={() => setShowDemoForm(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
