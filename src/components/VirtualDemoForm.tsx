@@ -51,7 +51,6 @@ export const VirtualDemoForm = ({ onClose }: { onClose: () => void }) => {
     });
     
     onClose();
-    navigate("/check-meetings");
   };
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -150,7 +149,7 @@ export const VirtualDemoForm = ({ onClose }: { onClose: () => void }) => {
           Cancel
         </Button>
         <Button type="submit" className="bg-red-600 hover:bg-red-700">
-          Submit
+          Submit Request
         </Button>
       </div>
     </form>

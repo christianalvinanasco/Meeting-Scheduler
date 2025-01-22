@@ -1,26 +1,37 @@
-import { DashboardLayout } from "@/components/DashboardLayout";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar, Video, Users, PlayCircle } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Calendar, Video, Users, PlayCircle } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { VirtualDemoForm } from "@/components/VirtualDemoForm";
 import { MeetingSchedules } from "@/components/MeetingSchedules";
 import { VideoUploadForm } from "@/components/VideoUploadForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [showMeetings, setShowMeetings] = useState(false);
-  const [showReferrals, setShowReferrals] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
+  const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggedIn(true);
+  };
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would typically make an API call to register the user
+    toast({
+      title: "Registration successful!",
+      description: "You can now log in with your credentials",
+    });
+    setIsRegistering(false);
   };
 
   if (!isLoggedIn) {
@@ -34,8 +45,10 @@ const Index = () => {
               className="h-24 object-contain mb-8"
             />
             <div className="space-y-6 max-w-md">
-              <h2 className="text-xl font-semibold">Please enter your credentials</h2>
-              <form onSubmit={handleLogin} className="space-y-4">
+              <h2 className="text-xl font-semibold">
+                {isRegistering ? "Create an account" : "Please enter your credentials"}
+              </h2>
+              <form onSubmit={isRegistering ? handleRegister : handleLogin} className="space-y-4">
                 <Input
                   type="text"
                   placeholder="Username"
@@ -51,7 +64,15 @@ const Index = () => {
                   className="w-full"
                 />
                 <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
-                  Log-in
+                  {isRegistering ? "Register" : "Log-in"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={() => setIsRegistering(!isRegistering)}
+                  className="w-full"
+                >
+                  {isRegistering ? "Already have an account? Log in" : "Don't have an account? Register"}
                 </Button>
               </form>
             </div>
@@ -69,8 +90,8 @@ const Index = () => {
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-12 animate-fadeIn">
+    <div className="min-h-screen bg-background p-6">
+      <div className="space-y-12 animate-fadeIn max-w-7xl mx-auto">
         <header className="text-center space-y-4">
           <h1 className="text-6xl font-bold text-red-600">WELCOME!</h1>
           <p className="text-2xl text-gray-600">
@@ -101,16 +122,6 @@ const Index = () => {
 
           <Card 
             className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
-            onClick={() => setShowReferrals(true)}
-          >
-            <div className="flex flex-col items-center space-y-4">
-              <Users className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-semibold">Track referral status</h3>
-            </div>
-          </Card>
-
-          <Card 
-            className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
             onClick={() => setShowVideoUpload(true)}
           >
             <div className="flex flex-col items-center space-y-4">
@@ -125,7 +136,10 @@ const Index = () => {
             <DialogHeader>
               <DialogTitle>Schedule a Virtual Demo</DialogTitle>
             </DialogHeader>
-            <VirtualDemoForm onClose={() => setShowDemoForm(false)} />
+            <VirtualDemoForm onClose={() => {
+              setShowDemoForm(false);
+              setShowMeetings(true);
+            }} />
           </DialogContent>
         </Dialog>
 
@@ -138,61 +152,6 @@ const Index = () => {
           </DialogContent>
         </Dialog>
 
-        <Dialog open={showReferrals} onOpenChange={setShowReferrals}>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle>Referral Status</DialogTitle>
-            </DialogHeader>
-            <div className="p-6">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-red-600 text-white">
-                    <th className="p-2">Company Name</th>
-                    <th className="p-2">Status</th>
-                    <th className="p-2">Date onboarded</th>
-                    <th className="p-2">Date started</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    {
-                      companyName: "ABC Corp",
-                      status: "Onboarded",
-                      dateOnboarded: "01/31/2025",
-                      dateStarted: ""
-                    },
-                    {
-                      companyName: "123 Finance",
-                      status: "Please follow up for company details",
-                      dateOnboarded: "",
-                      dateStarted: ""
-                    },
-                    {
-                      companyName: "J1 Construction",
-                      status: "System User",
-                      dateOnboarded: "01/31/2025",
-                      dateStarted: "02/01/2025"
-                    },
-                    {
-                      companyName: "Agila Tracking Corp",
-                      status: "Fully Compliant",
-                      dateOnboarded: "01/31/2025",
-                      dateStarted: "02/01/2025"
-                    }
-                  ].map((item, index) => (
-                    <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
-                      <td className="p-2">{item.companyName}</td>
-                      <td className="p-2">{item.status}</td>
-                      <td className="p-2">{item.dateOnboarded}</td>
-                      <td className="p-2">{item.dateStarted}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </DialogContent>
-        </Dialog>
-
         <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
@@ -202,7 +161,7 @@ const Index = () => {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 
