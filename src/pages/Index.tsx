@@ -1,27 +1,14 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Calendar, Video, Users, PlayCircle, Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { VirtualDemoForm } from "@/components/VirtualDemoForm";
 import { MeetingSchedules } from "@/components/MeetingSchedules";
 import { VideoUploadForm } from "@/components/VideoUploadForm";
+import { ReferralStatus } from "@/components/ReferralStatus";
+import { Header } from "@/components/Header";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -32,9 +19,6 @@ const Index = () => {
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const { toast } = useToast();
 
-  // New state for definition dialogs
-  const [showDefinition, setShowDefinition] = useState<string | null>(null);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggedIn(true);
@@ -44,57 +28,27 @@ const Index = () => {
     });
   };
 
-  const definitions = {
-    onboarded: "A client who has been successfully registered and integrated into the ML Payroll PRO system.",
-    active: "A client who is currently using the ML Payroll PRO system and their account is in good standing.",
-    fullyCompliant: "A client who has met all requirements and follows all necessary protocols of the ML Payroll PRO system.",
-    systemUser: "An authorized user of the ML Payroll PRO system with specific roles and permissions."
-  };
-
-  const companyData = [
-    {
-      companyName: "ABC Corp",
-      status: "Active",
-      dateOnboarded: "2024-01-15",
-      dateStarted: "2024-01-20"
-    },
-    {
-      companyName: "XYZ Ltd",
-      status: "Onboarded",
-      dateOnboarded: "2024-02-01",
-      dateStarted: "2024-02-05"
-    }
-  ];
-
   const dashboardCards = [
     {
       title: "Schedule a Virtual Demo",
-      icon: Video,
       onClick: () => setShowDemoForm(true),
-      color: "text-red-500"
     },
     {
       title: "Check Meeting Schedules",
-      icon: Calendar,
       onClick: () => setShowMeetings(true),
-      color: "text-red-500"
     },
     {
       title: "Track Referral Status",
-      icon: Users,
       onClick: () => setShowMeetings(true),
-      color: "text-red-500"
     },
     {
       title: "ML Payroll PRO Virtual Walkthrough",
-      icon: PlayCircle,
       onClick: () => setShowVideoUpload(true),
-      color: "text-red-500"
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background">
       {!isLoggedIn ? (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100">
           <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
@@ -137,76 +91,30 @@ const Index = () => {
           </div>
         </div>
       ) : (
-        <div className="space-y-12 animate-fadeIn max-w-7xl mx-auto">
-          <header className="text-center space-y-4">
-            <h1 className="text-6xl font-bold text-red-600">WELCOME!</h1>
-            <p className="text-2xl text-gray-600">
-              How can I support you today?
-            </p>
-          </header>
+        <div className="animate-fadeIn">
+          <Header />
+          <div className="p-6 space-y-12 max-w-7xl mx-auto">
+            <header className="text-center space-y-4">
+              <h1 className="text-6xl font-bold text-red-600">WELCOME!</h1>
+              <p className="text-2xl text-gray-600">
+                How can I support you today?
+              </p>
+            </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {dashboardCards.map((card) => (
-              <Card 
-                key={card.title}
-                className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group bg-white"
-                onClick={card.onClick}
-              >
-                <div className="flex flex-col items-center space-y-4">
-                  <card.icon className={`w-16 h-16 ${card.color}`} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {dashboardCards.map((card) => (
+                <Card 
+                  key={card.title}
+                  className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group bg-white"
+                  onClick={card.onClick}
+                >
                   <h3 className="text-xl font-semibold">{card.title}</h3>
-                </div>
-              </Card>
-            ))}
-          </div>
-
-          {/* Company Status Table */}
-          <Card className="p-6">
-            <h2 className="text-2xl font-bold mb-6">Company Status</h2>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Company Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date Onboarded</TableHead>
-                  <TableHead>Date Started</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {companyData.map((company, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{company.companyName}</TableCell>
-                    <TableCell>{company.status}</TableCell>
-                    <TableCell>{company.dateOnboarded}</TableCell>
-                    <TableCell>{company.dateStarted}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            {/* Definition buttons */}
-            <div className="flex flex-wrap justify-center gap-4 mt-8">
-              {Object.entries(definitions).map(([key, value]) => (
-                <TooltipProvider key={key}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="border-red-600 text-red-600 hover:bg-red-50"
-                        onClick={() => setShowDefinition(key)}
-                      >
-                        <Info className="w-4 h-4 mr-2" />
-                        {key.charAt(0).toUpperCase() + key.slice(1)}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Click to see definition</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                </Card>
               ))}
             </div>
-          </Card>
+
+            <ReferralStatus />
+          </div>
 
           {/* Dialogs */}
           <Dialog open={showDemoForm} onOpenChange={setShowDemoForm}>
@@ -236,20 +144,6 @@ const Index = () => {
                 <DialogTitle>ML Payroll PRO Virtual Walkthrough</DialogTitle>
               </DialogHeader>
               <VideoUploadForm />
-            </DialogContent>
-          </Dialog>
-
-          {/* Definition Dialog */}
-          <Dialog open={!!showDefinition} onOpenChange={() => setShowDefinition(null)}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {showDefinition && showDefinition.charAt(0).toUpperCase() + showDefinition.slice(1)}
-                </DialogTitle>
-              </DialogHeader>
-              <p className="text-gray-700">
-                {showDefinition && definitions[showDefinition as keyof typeof definitions]}
-              </p>
             </DialogContent>
           </Dialog>
         </div>
