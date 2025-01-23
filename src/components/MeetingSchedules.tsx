@@ -10,10 +10,15 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
 
   useEffect(() => {
     const storedMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
-    setMeetings(storedMeetings);
+    // Ensure the status is one of the allowed values
+    const typedMeetings = storedMeetings.map((meeting: any) => ({
+      ...meeting,
+      status: meeting.status as Meeting['status'] // This ensures the status is properly typed
+    }));
+    setMeetings(typedMeetings);
   }, []);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: Meeting['status']) => {
     switch (status.toLowerCase()) {
       case "approved":
         return "bg-status-approved text-white";
@@ -27,7 +32,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
     }
   };
 
-  const handleStatusChange = (meetingId: number, newStatus: string) => {
+  const handleStatusChange = (meetingId: number, newStatus: Meeting['status']) => {
     const updatedMeetings = meetings.map(meeting => 
       meeting.id === meetingId ? { ...meeting, status: newStatus } : meeting
     );
@@ -60,7 +65,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
                 {userRole === "main_admin" ? (
                   <Select 
                     defaultValue={meeting.status}
-                    onValueChange={(value) => handleStatusChange(meeting.id, value)}
+                    onValueChange={(value) => handleStatusChange(meeting.id, value as Meeting['status'])}
                   >
                     <SelectTrigger className={getStatusColor(meeting.status)}>
                       <SelectValue>{meeting.status}</SelectValue>
