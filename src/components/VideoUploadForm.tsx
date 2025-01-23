@@ -4,12 +4,14 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { PlayCircle } from "lucide-react";
 
 export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) => {
   const { toast } = useToast();
   const [videoTitle, setVideoTitle] = useState("");
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     const storedVideo = localStorage.getItem("mlPayrollVideo");
@@ -35,6 +37,14 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
     });
     setVideoTitle("");
     setVideoFile(null);
+  };
+
+  const handleWatchVideo = () => {
+    setShowVideo(true);
+    toast({
+      title: "Video Loaded",
+      description: "ML Payroll PRO Virtual Walkthrough is ready to play",
+    });
   };
 
   return (
@@ -65,9 +75,21 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
             Upload Video
           </Button>
         </form>
-      ) : null}
+      ) : (
+        videoUrl && !showVideo && (
+          <div className="flex justify-center">
+            <Button
+              onClick={handleWatchVideo}
+              className="bg-red-600 hover:bg-red-700 flex items-center gap-2"
+            >
+              <PlayCircle className="w-5 h-5" />
+              Watch ML Payroll PRO Virtual Walkthrough
+            </Button>
+          </div>
+        )
+      )}
       
-      {videoUrl && (
+      {videoUrl && showVideo && (
         <div className="mt-6">
           <video 
             controls 
