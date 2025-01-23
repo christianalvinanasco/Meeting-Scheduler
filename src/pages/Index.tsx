@@ -12,7 +12,6 @@ import { UserRole } from "@/types/user";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("client");
@@ -30,35 +29,33 @@ const Index = () => {
     });
   };
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Registration successful!",
-      description: "You can now log in with your credentials",
-    });
-    setIsRegistering(false);
-  };
-
   const dashboardCards = [
     {
       title: "Schedule a Virtual Demo",
       icon: Video,
       onClick: () => setShowDemoForm(true),
-      color: "bg-blue-500",
+      color: "text-red-500",
       roles: ["client", "main_admin"]
     },
     {
       title: "Check Meeting Schedules",
       icon: Calendar,
       onClick: () => setShowMeetings(true),
-      color: "bg-green-500",
+      color: "text-red-500",
       roles: ["client", "main_admin", "first_division", "other_division"]
+    },
+    {
+      title: "Track Referral Status",
+      icon: Users,
+      onClick: () => setShowMeetings(true),
+      color: "text-red-500",
+      roles: ["main_admin", "first_division", "other_division"]
     },
     {
       title: "ML Payroll PRO Virtual Walkthrough",
       icon: PlayCircle,
       onClick: () => setShowVideoUpload(true),
-      color: "bg-purple-500",
+      color: "text-red-500",
       roles: ["main_admin", "first_division", "other_division"]
     },
   ];
@@ -75,10 +72,8 @@ const Index = () => {
                 className="h-24 object-contain mb-8"
               />
               <div className="space-y-6 max-w-md">
-                <h2 className="text-xl font-semibold">
-                  {isRegistering ? "Create an account" : "Please enter your credentials"}
-                </h2>
-                <form onSubmit={isRegistering ? handleRegister : handleLogin} className="space-y-4">
+                <h2 className="text-xl font-semibold">Please enter your credentials</h2>
+                <form onSubmit={handleLogin} className="space-y-4">
                   <Input
                     type="text"
                     placeholder="Username"
@@ -93,28 +88,18 @@ const Index = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full"
                   />
-                  {isRegistering && (
-                    <select
-                      className="w-full p-2 border rounded"
-                      value={role}
-                      onChange={(e) => setRole(e.target.value as UserRole)}
-                    >
-                      <option value="client">Client (RM)</option>
-                      <option value="main_admin">Main Admin</option>
-                      <option value="first_division">First Division</option>
-                      <option value="other_division">Other Division</option>
-                    </select>
-                  )}
-                  <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
-                    {isRegistering ? "Register" : "Log-in"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="link"
-                    onClick={() => setIsRegistering(!isRegistering)}
-                    className="w-full"
+                  <select
+                    className="w-full p-2 border rounded"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value as UserRole)}
                   >
-                    {isRegistering ? "Already have an account? Log in" : "Don't have an account? Register"}
+                    <option value="client">Client (RM)</option>
+                    <option value="main_admin">Main Admin</option>
+                    <option value="first_division">First Division</option>
+                    <option value="other_division">Other Division</option>
+                  </select>
+                  <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
+                    Log-in
                   </Button>
                 </form>
               </div>
@@ -137,17 +122,17 @@ const Index = () => {
             </p>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {dashboardCards
               .filter(card => card.roles.includes(role))
               .map((card) => (
                 <Card 
                   key={card.title}
-                  className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
+                  className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group bg-white"
                   onClick={card.onClick}
                 >
                   <div className="flex flex-col items-center space-y-4">
-                    <card.icon className={`w-16 h-16 ${card.color} text-white p-3 rounded-full group-hover:scale-110 transition-transform`} />
+                    <card.icon className={`w-16 h-16 ${card.color}`} />
                     <h3 className="text-xl font-semibold">{card.title}</h3>
                   </div>
                 </Card>
@@ -162,7 +147,7 @@ const Index = () => {
               <VirtualDemoForm onClose={() => {
                 setShowDemoForm(false);
                 setShowMeetings(true);
-              }} />
+              }} userRole={role} />
             </DialogContent>
           </Dialog>
 
