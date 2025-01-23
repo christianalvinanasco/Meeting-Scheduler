@@ -156,16 +156,16 @@ const Index = () => {
               <DialogHeader>
                 <DialogTitle>Meeting Schedules</DialogTitle>
               </DialogHeader>
-              <MeetingSchedules />
+              <MeetingSchedules userRole={role} />
             </DialogContent>
           </Dialog>
 
           <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Upload Video Material</DialogTitle>
+                <DialogTitle>ML Payroll PRO Virtual Walkthrough</DialogTitle>
               </DialogHeader>
-              <VideoUploadForm />
+              <VideoUploadForm userRole={role} />
             </DialogContent>
           </Dialog>
         </div>
