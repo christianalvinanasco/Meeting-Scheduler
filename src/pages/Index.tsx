@@ -16,6 +16,7 @@ const Index = () => {
   const [password, setPassword] = useState("");
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [showMeetings, setShowMeetings] = useState(false);
+  const [showReferralStatus, setShowReferralStatus] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const { toast } = useToast();
 
@@ -39,7 +40,7 @@ const Index = () => {
     },
     {
       title: "Track Referral Status",
-      onClick: () => setShowMeetings(true),
+      onClick: () => setShowReferralStatus(true),
     },
     {
       title: "ML Payroll PRO Virtual Walkthrough",
@@ -112,8 +113,6 @@ const Index = () => {
                 </Card>
               ))}
             </div>
-
-            <ReferralStatus />
           </div>
 
           {/* Dialogs */}
@@ -135,6 +134,15 @@ const Index = () => {
                 <DialogTitle>Meeting Schedules</DialogTitle>
               </DialogHeader>
               <MeetingSchedules />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={showReferralStatus} onOpenChange={setShowReferralStatus}>
+            <DialogContent className="max-w-4xl">
+              <DialogHeader>
+                <DialogTitle>Track Referral Status</DialogTitle>
+              </DialogHeader>
+              <ReferralStatus />
             </DialogContent>
           </Dialog>
 
