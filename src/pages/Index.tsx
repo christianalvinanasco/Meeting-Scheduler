@@ -9,11 +9,20 @@ import { VideoUploadForm } from "@/components/VideoUploadForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
+type UserRole = "main_admin" | "first_division" | "other_division" | "client";
+
+interface User {
+  username: string;
+  password: string;
+  role: UserRole;
+}
+
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<UserRole>("client");
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [showMeetings, setShowMeetings] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
@@ -21,12 +30,17 @@ const Index = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    // In a real app, this would validate against a backend
     setIsLoggedIn(true);
+    toast({
+      title: "Welcome back!",
+      description: `Logged in successfully as ${role}`,
+    });
   };
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically make an API call to register the user
+    // In a real app, this would create a new user in the backend
     toast({
       title: "Registration successful!",
       description: "You can now log in with your credentials",
@@ -63,6 +77,18 @@ const Index = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full"
                 />
+                {isRegistering && (
+                  <select
+                    className="w-full p-2 border rounded"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value as UserRole)}
+                  >
+                    <option value="client">Client (RM)</option>
+                    <option value="main_admin">Main Admin</option>
+                    <option value="first_division">First Division</option>
+                    <option value="other_division">Other Division</option>
+                  </select>
+                )}
                 <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
                   {isRegistering ? "Register" : "Log-in"}
                 </Button>
@@ -89,6 +115,27 @@ const Index = () => {
     );
   }
 
+  const dashboardCards = [
+    {
+      title: "Schedule a Virtual Demo",
+      icon: Video,
+      onClick: () => setShowDemoForm(true),
+      color: "bg-blue-500",
+    },
+    {
+      title: "Check Meeting Schedules",
+      icon: Calendar,
+      onClick: () => setShowMeetings(true),
+      color: "bg-green-500",
+    },
+    {
+      title: "ML Payroll PRO Virtual Walkthrough",
+      icon: PlayCircle,
+      onClick: () => setShowVideoUpload(true),
+      color: "bg-purple-500",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="space-y-12 animate-fadeIn max-w-7xl mx-auto">
@@ -99,36 +146,19 @@ const Index = () => {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <Card 
-            className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
-            onClick={() => setShowDemoForm(true)}
-          >
-            <div className="flex flex-col items-center space-y-4">
-              <Video className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-semibold">Schedule a virtual demo</h3>
-            </div>
-          </Card>
-
-          <Card 
-            className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
-            onClick={() => setShowMeetings(true)}
-          >
-            <div className="flex flex-col items-center space-y-4">
-              <Calendar className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-semibold">Check meeting schedules</h3>
-            </div>
-          </Card>
-
-          <Card 
-            className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
-            onClick={() => setShowVideoUpload(true)}
-          >
-            <div className="flex flex-col items-center space-y-4">
-              <PlayCircle className="w-16 h-16 text-red-500 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-semibold">ML Payroll PRO Virtual Walkthrough</h3>
-            </div>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {dashboardCards.map((card) => (
+            <Card 
+              key={card.title}
+              className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group"
+              onClick={card.onClick}
+            >
+              <div className="flex flex-col items-center space-y-4">
+                <card.icon className={`w-16 h-16 ${card.color} text-white p-3 rounded-full group-hover:scale-110 transition-transform`} />
+                <h3 className="text-xl font-semibold">{card.title}</h3>
+              </div>
+            </Card>
+          ))}
         </div>
 
         <Dialog open={showDemoForm} onOpenChange={setShowDemoForm}>
