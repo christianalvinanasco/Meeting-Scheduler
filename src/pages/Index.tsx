@@ -8,7 +8,14 @@ import { MeetingSchedules } from "@/components/MeetingSchedules";
 import { VideoUploadForm } from "@/components/VideoUploadForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { UserRole } from "@/types/user";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Tooltip,
   TooltipContent,
@@ -20,7 +27,6 @@ const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<UserRole>("client");
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [showMeetings, setShowMeetings] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
@@ -31,8 +37,6 @@ const Index = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you would validate credentials against a backend
-    // For now, we'll simulate a successful login
     setIsLoggedIn(true);
     toast({
       title: "Welcome back!",
@@ -46,6 +50,21 @@ const Index = () => {
     fullyCompliant: "A client who has met all requirements and follows all necessary protocols of the ML Payroll PRO system.",
     systemUser: "An authorized user of the ML Payroll PRO system with specific roles and permissions."
   };
+
+  const companyData = [
+    {
+      companyName: "ABC Corp",
+      status: "Active",
+      dateOnboarded: "2024-01-15",
+      dateStarted: "2024-01-20"
+    },
+    {
+      companyName: "XYZ Ltd",
+      status: "Onboarded",
+      dateOnboarded: "2024-02-01",
+      dateStarted: "2024-02-05"
+    }
+  ];
 
   const dashboardCards = [
     {
@@ -141,28 +160,84 @@ const Index = () => {
             ))}
           </div>
 
-          {/* Definition buttons */}
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
-            {Object.entries(definitions).map(([key, value]) => (
-              <TooltipProvider key={key}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="border-red-600 text-red-600 hover:bg-red-50"
-                      onClick={() => setShowDefinition(key)}
-                    >
-                      <Info className="w-4 h-4 mr-2" />
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Click to see definition</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ))}
-          </div>
+          {/* Company Status Table */}
+          <Card className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Company Status</h2>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Company Name</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Date Onboarded</TableHead>
+                  <TableHead>Date Started</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {companyData.map((company, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{company.companyName}</TableCell>
+                    <TableCell>{company.status}</TableCell>
+                    <TableCell>{company.dateOnboarded}</TableCell>
+                    <TableCell>{company.dateStarted}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {/* Definition buttons */}
+            <div className="flex flex-wrap justify-center gap-4 mt-8">
+              {Object.entries(definitions).map(([key, value]) => (
+                <TooltipProvider key={key}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="border-red-600 text-red-600 hover:bg-red-50"
+                        onClick={() => setShowDefinition(key)}
+                      >
+                        <Info className="w-4 h-4 mr-2" />
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Click to see definition</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ))}
+            </div>
+          </Card>
+
+          {/* Dialogs */}
+          <Dialog open={showDemoForm} onOpenChange={setShowDemoForm}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Schedule a Virtual Demo</DialogTitle>
+              </DialogHeader>
+              <VirtualDemoForm onClose={() => {
+                setShowDemoForm(false);
+                setShowMeetings(true);
+              }} />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={showMeetings} onOpenChange={setShowMeetings}>
+            <DialogContent className="max-w-4xl">
+              <DialogHeader>
+                <DialogTitle>Meeting Schedules</DialogTitle>
+              </DialogHeader>
+              <MeetingSchedules />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>ML Payroll PRO Virtual Walkthrough</DialogTitle>
+              </DialogHeader>
+              <VideoUploadForm />
+            </DialogContent>
+          </Dialog>
 
           {/* Definition Dialog */}
           <Dialog open={!!showDefinition} onOpenChange={() => setShowDefinition(null)}>
@@ -175,36 +250,6 @@ const Index = () => {
               <p className="text-gray-700">
                 {showDefinition && definitions[showDefinition as keyof typeof definitions]}
               </p>
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={showDemoForm} onOpenChange={setShowDemoForm}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Schedule a Virtual Demo</DialogTitle>
-              </DialogHeader>
-              <VirtualDemoForm onClose={() => {
-                setShowDemoForm(false);
-                setShowMeetings(true);
-              }} userRole={role} />
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={showMeetings} onOpenChange={setShowMeetings}>
-            <DialogContent className="max-w-4xl">
-              <DialogHeader>
-                <DialogTitle>Meeting Schedules</DialogTitle>
-              </DialogHeader>
-              <MeetingSchedules userRole={role} />
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>ML Payroll PRO Virtual Walkthrough</DialogTitle>
-              </DialogHeader>
-              <VideoUploadForm userRole={role} />
             </DialogContent>
           </Dialog>
         </div>
