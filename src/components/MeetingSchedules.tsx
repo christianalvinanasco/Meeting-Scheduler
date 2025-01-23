@@ -1,16 +1,8 @@
 import { useEffect, useState } from "react";
 import { Card } from "./ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-
-interface Meeting {
-  id: number;
-  companyName: string;
-  contactPerson: string;
-  meetingDate: string;
-  meetingTime: string;
-  status: string;
-  dateSubmitted: string;
-}
+import { Badge } from "./ui/badge";
+import { Meeting } from "@/types/user";
 
 export const MeetingSchedules = () => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
@@ -19,6 +11,20 @@ export const MeetingSchedules = () => {
     const storedMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
     setMeetings(storedMeetings);
   }, []);
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "approved":
+        return "bg-status-approved text-white";
+      case "rejected":
+        return "bg-status-rejected text-white";
+      case "pending":
+      case "referred":
+        return "bg-status-pending text-white";
+      default:
+        return "bg-gray-500 text-white";
+    }
+  };
 
   return (
     <Card className="p-6">
@@ -41,7 +47,11 @@ export const MeetingSchedules = () => {
               <TableCell>{meeting.contactPerson}</TableCell>
               <TableCell>{meeting.meetingDate}</TableCell>
               <TableCell>{meeting.meetingTime}</TableCell>
-              <TableCell>{meeting.status}</TableCell>
+              <TableCell>
+                <Badge className={getStatusColor(meeting.status)}>
+                  {meeting.status}
+                </Badge>
+              </TableCell>
               <TableCell>{meeting.dateSubmitted}</TableCell>
             </TableRow>
           ))}

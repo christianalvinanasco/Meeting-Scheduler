@@ -8,14 +8,13 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const timeSlots = [
-  "9:00 - 10:30",
   "10:00 - 11:30",
   "13:00 - 14:30",
   "14:30 - 16:00",
   "16:00 - 17:30"
 ];
 
-export const VirtualDemoForm = ({ onClose }: { onClose: () => void }) => {
+export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () => void; userRole?: string }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -25,22 +24,20 @@ export const VirtualDemoForm = ({ onClose }: { onClose: () => void }) => {
     meetingDate: "",
     meetingTime: "",
     clientEmails: "",
-    teamEmails: ""
+    teamEmails: "",
+    status: "pending"
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
     
-    // Get existing meetings from localStorage or initialize empty array
     const existingMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
     
-    // Add new meeting to array
     const newMeeting = {
       ...formData,
       id: Date.now(),
-      status: "Pending",
-      dateSubmitted: new Date().toLocaleDateString()
+      dateSubmitted: new Date().toLocaleDateString(),
+      status: userRole === "main_admin" ? "approved" : "pending"
     };
     
     localStorage.setItem("meetings", JSON.stringify([...existingMeetings, newMeeting]));
