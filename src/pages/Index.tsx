@@ -10,11 +10,13 @@ import { Header } from "@/components/Header";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { AddClientForm } from "@/components/AddClientForm";
+import { UserRole } from "@/types/user";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [userRole, setUserRole] = useState<UserRole>("main_admin"); // Default to main_admin for testing
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [showMeetings, setShowMeetings] = useState(false);
   const [showReferralStatus, setShowReferralStatus] = useState(false);
@@ -24,6 +26,8 @@ const Index = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    // In a real application, you would verify credentials here
+    // and set the appropriate user role based on the response
     setIsLoggedIn(true);
     toast({
       title: "Welcome back!",
@@ -50,7 +54,7 @@ const Index = () => {
     },
   ];
 
-  // Add a new card for admin users
+  // Add client account management for admin users
   if (userRole === "main_admin") {
     dashboardCards.push({
       title: "Add Client Account",
@@ -125,7 +129,6 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Add the new dialog for adding clients */}
           <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
@@ -170,7 +173,7 @@ const Index = () => {
               <DialogHeader>
                 <DialogTitle>ML Payroll PRO Virtual Walkthrough</DialogTitle>
               </DialogHeader>
-              <VideoUploadForm />
+              <VideoUploadForm userRole={userRole} />
             </DialogContent>
           </Dialog>
         </div>
