@@ -23,12 +23,11 @@ const Index = () => {
   const [showReferralStatus, setShowReferralStatus] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const [showAddClient, setShowAddClient] = useState(false);
+  const [showClientAccounts, setShowClientAccounts] = useState(false);
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, you would verify credentials here
-    // and set the appropriate user role based on the response
     setIsLoggedIn(true);
     toast({
       title: "Welcome back!",
@@ -57,10 +56,16 @@ const Index = () => {
 
   // Add client account management for admin users
   if (userRole === "main_admin") {
-    dashboardCards.push({
-      title: "Add Client Account",
-      onClick: () => setShowAddClient(true),
-    });
+    dashboardCards.push(
+      {
+        title: "Add Client Account",
+        onClick: () => setShowAddClient(true),
+      },
+      {
+        title: "View Client Accounts",
+        onClick: () => setShowClientAccounts(true),
+      }
+    );
   }
 
   return (
@@ -128,12 +133,6 @@ const Index = () => {
                 </Card>
               ))}
             </div>
-
-            {userRole === "main_admin" && (
-              <div className="mt-8">
-                <ClientAccountsList />
-              </div>
-            )}
           </div>
 
           <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
@@ -142,6 +141,15 @@ const Index = () => {
                 <DialogTitle>Add New Client Account</DialogTitle>
               </DialogHeader>
               <AddClientForm />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={showClientAccounts} onOpenChange={setShowClientAccounts}>
+            <DialogContent className="max-w-4xl">
+              <DialogHeader>
+                <DialogTitle>Client Accounts</DialogTitle>
+              </DialogHeader>
+              <ClientAccountsList />
             </DialogContent>
           </Dialog>
 
