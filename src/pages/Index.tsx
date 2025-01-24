@@ -9,6 +9,7 @@ import { ReferralStatus } from "@/components/ReferralStatus";
 import { Header } from "@/components/Header";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { AddClientForm } from "@/components/AddClientForm";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,6 +19,7 @@ const Index = () => {
   const [showMeetings, setShowMeetings] = useState(false);
   const [showReferralStatus, setShowReferralStatus] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
+  const [showAddClient, setShowAddClient] = useState(false);
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -47,6 +49,14 @@ const Index = () => {
       onClick: () => setShowVideoUpload(true),
     },
   ];
+
+  // Add a new card for admin users
+  if (userRole === "main_admin") {
+    dashboardCards.push({
+      title: "Add Client Account",
+      onClick: () => setShowAddClient(true),
+    });
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -115,7 +125,16 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Dialogs */}
+          {/* Add the new dialog for adding clients */}
+          <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Add New Client Account</DialogTitle>
+              </DialogHeader>
+              <AddClientForm />
+            </DialogContent>
+          </Dialog>
+
           <Dialog open={showDemoForm} onOpenChange={setShowDemoForm}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>

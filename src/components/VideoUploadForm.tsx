@@ -50,7 +50,7 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
   return (
     <Card className="p-6">
       <h2 className="text-2xl font-bold mb-6">ML Payroll PRO Virtual Walkthrough</h2>
-      {userRole === "main_admin" || userRole === "first_division" || userRole === "other_division" ? (
+      {userRole === "main_admin" ? (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="videoTitle">Video Title</Label>
@@ -59,6 +59,7 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
               value={videoTitle}
               onChange={(e) => setVideoTitle(e.target.value)}
               required
+              className="w-full"
             />
           </div>
           <div>
@@ -69,6 +70,7 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
               accept="video/*"
               onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
               required
+              className="w-full"
             />
           </div>
           <Button type="submit" className="bg-red-600 hover:bg-red-700">
