@@ -17,3 +17,10 @@ export interface User {
   username: string;
   role: UserRole;
 }
+
+export interface ClientAccount {
+  id: string;
+  username: string;
+  companyName: string;
+  dateCreated: string;
+}

@@ -4,6 +4,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { ClientAccount } from "@/types/user";
 
 export const AddClientForm = () => {
   const { toast } = useToast();
@@ -13,12 +14,20 @@ export const AddClientForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const newAccount: ClientAccount = {
+      id: crypto.randomUUID(),
+      username,
+      companyName,
+      dateCreated: new Date().toLocaleDateString(),
+    };
+
     // Here you would typically make an API call to create the account
-    // For now, we'll just show a success message
     toast({
       title: "Success!",
       description: `Account created for ${companyName}`,
     });
+    
     setUsername("");
     setPassword("");
     setCompanyName("");
@@ -26,7 +35,6 @@ export const AddClientForm = () => {
 
   return (
     <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Add New Client Account</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="companyName">Company Name</Label>

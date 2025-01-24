@@ -10,6 +10,7 @@ import { Header } from "@/components/Header";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { AddClientForm } from "@/components/AddClientForm";
+import { ClientAccountsList } from "@/components/ClientAccountsList";
 import { UserRole } from "@/types/user";
 
 const Index = () => {
@@ -127,6 +128,12 @@ const Index = () => {
                 </Card>
               ))}
             </div>
+
+            {userRole === "main_admin" && (
+              <div className="mt-8">
+                <ClientAccountsList />
+              </div>
+            )}
           </div>
 
           <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
