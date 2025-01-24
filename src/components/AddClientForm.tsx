@@ -6,7 +6,11 @@ import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ClientAccount } from "@/types/user";
 
-export const AddClientForm = () => {
+interface AddClientFormProps {
+  onAccountAdded?: (account: ClientAccount) => void;
+}
+
+export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
   const { toast } = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +26,9 @@ export const AddClientForm = () => {
       dateCreated: new Date().toLocaleDateString(),
     };
 
-    // Here you would typically make an API call to create the account
+    // Call the callback to update the accounts list
+    onAccountAdded?.(newAccount);
+
     toast({
       title: "Success!",
       description: `Account created for ${companyName}`,

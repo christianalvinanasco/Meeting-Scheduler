@@ -6,6 +6,14 @@ import { Label } from "./ui/label";
 import { ClientAccount } from "@/types/user";
 import { Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const ClientAccountsList = () => {
   const { toast } = useToast();
@@ -52,44 +60,46 @@ export const ClientAccountsList = () => {
     setShowEditDialog(false);
   };
 
-  // Add this function to update the accounts list when a new account is created
-  const addAccount = (newAccount: ClientAccount) => {
-    setAccounts([...accounts, newAccount]);
-  };
-
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Client Accounts</h3>
-      <div className="grid gap-4">
-        {accounts.map((account) => (
-          <div
-            key={account.id}
-            className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
-          >
-            <div>
-              <h4 className="font-medium">{account.companyName}</h4>
-              <p className="text-sm text-gray-500">Username: {account.username}</p>
-              <p className="text-sm text-gray-500">Created: {account.dateCreated}</p>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => handleEdit(account)}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="destructive"
-                size="icon"
-                onClick={() => handleDelete(account)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Company Name</TableHead>
+            <TableHead>Username</TableHead>
+            <TableHead>Date Created</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {accounts.map((account) => (
+            <TableRow key={account.id}>
+              <TableCell>{account.companyName}</TableCell>
+              <TableCell>{account.username}</TableCell>
+              <TableCell>{account.dateCreated}</TableCell>
+              <TableCell className="text-right">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleEdit(account)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => handleDelete(account)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
 
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
