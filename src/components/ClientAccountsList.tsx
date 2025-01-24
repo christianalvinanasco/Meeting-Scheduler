@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog";
 import { Input } from "./ui/input";
@@ -15,9 +14,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export const ClientAccountsList = () => {
+interface ClientAccountsListProps {
+  accounts: ClientAccount[];
+  setAccounts: (accounts: ClientAccount[]) => void;
+}
+
+export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsListProps) => {
   const { toast } = useToast();
-  const [accounts, setAccounts] = useState<ClientAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<ClientAccount | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editUsername, setEditUsername] = useState("");

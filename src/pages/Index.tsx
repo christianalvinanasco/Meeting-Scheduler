@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/hooks/use-toast";
 import { AddClientForm } from "@/components/AddClientForm";
 import { ClientAccountsList } from "@/components/ClientAccountsList";
-import { UserRole } from "@/types/user";
+import { UserRole, ClientAccount } from "@/types/user";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,6 +24,7 @@ const Index = () => {
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const [showAddClient, setShowAddClient] = useState(false);
   const [showClientAccounts, setShowClientAccounts] = useState(false);
+  const [clientAccounts, setClientAccounts] = useState<ClientAccount[]>([]);
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -32,6 +33,15 @@ const Index = () => {
     toast({
       title: "Welcome back!",
       description: "Logged in successfully",
+    });
+  };
+
+  const handleAddAccount = (newAccount: ClientAccount) => {
+    setClientAccounts(prev => [...prev, newAccount]);
+    setShowAddClient(false);
+    toast({
+      title: "Account Created",
+      description: `${newAccount.companyName}'s account has been created successfully.`,
     });
   };
 
@@ -140,7 +150,7 @@ const Index = () => {
               <DialogHeader>
                 <DialogTitle>Add New Client Account</DialogTitle>
               </DialogHeader>
-              <AddClientForm />
+              <AddClientForm onAccountAdded={handleAddAccount} />
             </DialogContent>
           </Dialog>
 
@@ -149,7 +159,7 @@ const Index = () => {
               <DialogHeader>
                 <DialogTitle>Client Accounts</DialogTitle>
               </DialogHeader>
-              <ClientAccountsList />
+              <ClientAccountsList accounts={clientAccounts} setAccounts={setClientAccounts} />
             </DialogContent>
           </Dialog>
 
