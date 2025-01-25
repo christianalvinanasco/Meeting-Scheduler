@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { ClientAccount } from "@/types/user";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Table,
@@ -26,11 +26,14 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editUsername, setEditUsername] = useState("");
   const [editCompanyName, setEditCompanyName] = useState("");
+  const [editPassword, setEditPassword] = useState("");
+  const [showPasswords, setShowPasswords] = useState<{ [key: string]: boolean }>({});
 
   const handleEdit = (account: ClientAccount) => {
     setSelectedAccount(account);
     setEditUsername(account.username);
     setEditCompanyName(account.companyName);
+    setEditPassword(account.password);
     setShowEditDialog(true);
   };
 
@@ -52,6 +55,7 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
               ...account,
               username: editUsername,
               companyName: editCompanyName,
+              password: editPassword,
             }
           : account
       )
@@ -64,6 +68,13 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
     setShowEditDialog(false);
   };
 
+  const togglePasswordVisibility = (accountId: string) => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [accountId]: !prev[accountId]
+    }));
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Client Accounts</h3>
@@ -72,6 +83,7 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
           <TableRow>
             <TableHead>Company Name</TableHead>
             <TableHead>Username</TableHead>
+            <TableHead>Password</TableHead>
             <TableHead>Date Created</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -81,6 +93,23 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
             <TableRow key={account.id}>
               <TableCell>{account.companyName}</TableCell>
               <TableCell>{account.username}</TableCell>
+              <TableCell className="relative">
+                <span className="flex items-center gap-2">
+                  {showPasswords[account.id] ? account.password : '••••••••'}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => togglePasswordVisibility(account.id)}
+                    className="h-4 w-4"
+                  >
+                    {showPasswords[account.id] ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </span>
+              </TableCell>
               <TableCell>{account.dateCreated}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
@@ -125,6 +154,15 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
                 id="editCompanyName"
                 value={editCompanyName}
                 onChange={(e) => setEditCompanyName(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="editPassword">Password</Label>
+              <Input
+                id="editPassword"
+                type="password"
+                value={editPassword}
+                onChange={(e) => setEditPassword(e.target.value)}
               />
             </div>
           </div>

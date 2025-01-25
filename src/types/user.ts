@@ -23,4 +23,5 @@ export interface ClientAccount {
   username: string;
   companyName: string;
   dateCreated: string;
+  password: string;
 }

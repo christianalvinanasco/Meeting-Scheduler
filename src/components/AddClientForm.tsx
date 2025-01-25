@@ -22,11 +22,11 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
     const newAccount: ClientAccount = {
       id: crypto.randomUUID(),
       username,
+      password,
       companyName,
       dateCreated: new Date().toLocaleDateString(),
     };
 
-    // Call the callback to update the accounts list
     onAccountAdded?.(newAccount);
 
     toast({
