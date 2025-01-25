@@ -42,7 +42,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
             title: "Meeting Referred",
             description: "Meeting has been referred to the second admin for review.",
           });
-          return { ...meeting, status: "referred" };
+          return { ...meeting, status: "referred" as Meeting['status'] };
         }
         // If second admin rejects, meeting is rejected
         if (userRole === "second_admin" && newStatus === "rejected") {
@@ -50,7 +50,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
             title: "Meeting Rejected",
             description: "Meeting has been rejected by both admins.",
           });
-          return { ...meeting, status: "rejected" };
+          return { ...meeting, status: "rejected" as Meeting['status'] };
         }
         // For all other cases, apply the selected status
         return { ...meeting, status: newStatus };
