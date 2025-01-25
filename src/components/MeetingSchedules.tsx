@@ -20,14 +20,15 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
   }, []);
 
   const getStatusColor = (status: Meeting['status']) => {
-    switch (status.toLowerCase()) {
-      case "approved":
-        return "bg-status-approved text-white";
-      case "rejected":
-        return "bg-status-rejected text-white";
-      case "pending":
-      case "referred":
-        return "bg-status-pending text-white";
+    switch (status) {
+      case "onboarded":
+        return "bg-blue-500 text-white";
+      case "active":
+        return "bg-green-500 text-white";
+      case "systemUser":
+        return "bg-purple-500 text-white";
+      case "fullyCompliant":
+        return "bg-yellow-500 text-white";
       default:
         return "bg-gray-500 text-white";
     }
@@ -36,23 +37,10 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
   const handleStatusChange = (meetingId: number, newStatus: Meeting['status']) => {
     const updatedMeetings = meetings.map(meeting => {
       if (meeting.id === meetingId) {
-        // If main admin rejects, automatically refer to second admin
-        if (userRole === "main_admin" && newStatus === "rejected") {
-          toast({
-            title: "Meeting Referred",
-            description: "Meeting has been referred to the second admin for review.",
-          });
-          return { ...meeting, status: "referred" as Meeting['status'] };
-        }
-        // If second admin rejects, meeting is rejected
-        if (userRole === "second_admin" && newStatus === "rejected") {
-          toast({
-            title: "Meeting Rejected",
-            description: "Meeting has been rejected by both admins.",
-          });
-          return { ...meeting, status: "rejected" as Meeting['status'] };
-        }
-        // For all other cases, apply the selected status
+        toast({
+          title: "Status Updated",
+          description: `Meeting status has been updated to ${newStatus}.`,
+        });
         return { ...meeting, status: newStatus };
       }
       return meeting;
@@ -63,21 +51,12 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
   };
 
   const getStatusOptions = () => {
-    if (userRole === "main_admin") {
-      return [
-        { value: "pending", label: "Pending" },
-        { value: "approved", label: "Approved" },
-        { value: "rejected", label: "Reject & Refer" },
-      ];
-    }
-    if (userRole === "second_admin") {
-      return [
-        { value: "pending", label: "Pending" },
-        { value: "approved", label: "Approved" },
-        { value: "rejected", label: "Rejected" },
-      ];
-    }
-    return [];
+    return [
+      { value: "onboarded", label: "Onboarded" },
+      { value: "active", label: "Active" },
+      { value: "systemUser", label: "System User" },
+      { value: "fullyCompliant", label: "Fully Compliant" },
+    ];
   };
 
   return (
