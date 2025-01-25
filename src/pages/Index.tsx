@@ -12,12 +12,13 @@ import { useToast } from "@/hooks/use-toast";
 import { AddClientForm } from "@/components/AddClientForm";
 import { ClientAccountsList } from "@/components/ClientAccountsList";
 import { UserRole, ClientAccount } from "@/types/user";
+import { Video, Calendar, Users, Play, UserPlus, List } from "lucide-react";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [userRole, setUserRole] = useState<UserRole>("main_admin"); // Default to main_admin for testing
+  const [userRole, setUserRole] = useState<UserRole>("main_admin");
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [showMeetings, setShowMeetings] = useState(false);
   const [showReferralStatus, setShowReferralStatus] = useState(false);
@@ -48,18 +49,22 @@ const Index = () => {
   const dashboardCards = [
     {
       title: "Schedule a Virtual Demo",
+      icon: Video,
       onClick: () => setShowDemoForm(true),
     },
     {
       title: "Check Meeting Schedules",
+      icon: Calendar,
       onClick: () => setShowMeetings(true),
     },
     {
       title: "Track Referral Status",
+      icon: Users,
       onClick: () => setShowReferralStatus(true),
     },
     {
       title: "ML Payroll PRO Virtual Walkthrough",
+      icon: Play,
       onClick: () => setShowVideoUpload(true),
     },
   ];
@@ -69,10 +74,12 @@ const Index = () => {
     dashboardCards.push(
       {
         title: "Add Client Account",
+        icon: UserPlus,
         onClick: () => setShowAddClient(true),
       },
       {
         title: "View Client Accounts",
+        icon: List,
         onClick: () => setShowClientAccounts(true),
       }
     );
@@ -139,7 +146,10 @@ const Index = () => {
                   className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group bg-white"
                   onClick={card.onClick}
                 >
-                  <h3 className="text-xl font-semibold">{card.title}</h3>
+                  <div className="flex flex-col items-center space-y-4">
+                    <card.icon className="w-12 h-12 text-red-600" />
+                    <h3 className="text-xl font-semibold">{card.title}</h3>
+                  </div>
                 </Card>
               ))}
             </div>
