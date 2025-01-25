@@ -1,4 +1,4 @@
-export type UserRole = "main_admin" | "first_division" | "other_division" | "client";
+export type UserRole = "main_admin" | "second_admin" | "first_division" | "other_division" | "client";
 
 export interface Meeting {
   id: number;

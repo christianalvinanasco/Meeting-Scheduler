@@ -4,16 +4,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Badge } from "./ui/badge";
 import { Meeting } from "@/types/user";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string }) => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     const storedMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
-    // Ensure the status is one of the allowed values
     const typedMeetings = storedMeetings.map((meeting: any) => ({
       ...meeting,
-      status: meeting.status as Meeting['status'] // This ensures the status is properly typed
+      status: meeting.status as Meeting['status']
     }));
     setMeetings(typedMeetings);
   }, []);
@@ -33,11 +34,50 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
   };
 
   const handleStatusChange = (meetingId: number, newStatus: Meeting['status']) => {
-    const updatedMeetings = meetings.map(meeting => 
-      meeting.id === meetingId ? { ...meeting, status: newStatus } : meeting
-    );
+    const updatedMeetings = meetings.map(meeting => {
+      if (meeting.id === meetingId) {
+        // If main admin rejects, automatically refer to second admin
+        if (userRole === "main_admin" && newStatus === "rejected") {
+          toast({
+            title: "Meeting Referred",
+            description: "Meeting has been referred to the second admin for review.",
+          });
+          return { ...meeting, status: "referred" };
+        }
+        // If second admin rejects, meeting is rejected
+        if (userRole === "second_admin" && newStatus === "rejected") {
+          toast({
+            title: "Meeting Rejected",
+            description: "Meeting has been rejected by both admins.",
+          });
+          return { ...meeting, status: "rejected" };
+        }
+        // For all other cases, apply the selected status
+        return { ...meeting, status: newStatus };
+      }
+      return meeting;
+    });
+    
     setMeetings(updatedMeetings);
     localStorage.setItem("meetings", JSON.stringify(updatedMeetings));
+  };
+
+  const getStatusOptions = () => {
+    if (userRole === "main_admin") {
+      return [
+        { value: "pending", label: "Pending" },
+        { value: "approved", label: "Approved" },
+        { value: "rejected", label: "Reject & Refer" },
+      ];
+    }
+    if (userRole === "second_admin") {
+      return [
+        { value: "pending", label: "Pending" },
+        { value: "approved", label: "Approved" },
+        { value: "rejected", label: "Rejected" },
+      ];
+    }
+    return [];
   };
 
   return (
@@ -62,7 +102,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
               <TableCell>{meeting.meetingDate}</TableCell>
               <TableCell>{meeting.meetingTime}</TableCell>
               <TableCell>
-                {userRole === "main_admin" ? (
+                {(userRole === "main_admin" || userRole === "second_admin") ? (
                   <Select 
                     defaultValue={meeting.status}
                     onValueChange={(value) => handleStatusChange(meeting.id, value as Meeting['status'])}
@@ -71,10 +111,11 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
                       <SelectValue>{meeting.status}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="approved">Approved</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
-                      <SelectItem value="referred">Referred</SelectItem>
+                      {getStatusOptions().map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 ) : (
