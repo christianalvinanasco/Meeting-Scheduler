@@ -40,30 +40,32 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
   };
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 bg-white shadow-lg rounded-lg border border-gray-100">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="companyName">Company Name</Label>
+          <Label htmlFor="companyName" className="text-brand-gray-dark">Company Name</Label>
           <Input
             id="companyName"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             required
             placeholder="Enter company name"
+            className="mt-1 border-brand-gray-light focus:border-primary focus:ring-primary"
           />
         </div>
         <div>
-          <Label htmlFor="username">Username</Label>
+          <Label htmlFor="username" className="text-brand-gray-dark">Username</Label>
           <Input
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
             placeholder="Enter username"
+            className="mt-1 border-brand-gray-light focus:border-primary focus:ring-primary"
           />
         </div>
         <div>
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="text-brand-gray-dark">Password</Label>
           <Input
             id="password"
             type="password"
@@ -71,9 +73,13 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="Enter password"
+            className="mt-1 border-brand-gray-light focus:border-primary focus:ring-primary"
           />
         </div>
-        <Button type="submit" className="bg-red-600 hover:bg-red-700 w-full">
+        <Button 
+          type="submit" 
+          className="w-full bg-primary hover:bg-primary-dark text-white font-semibold transition-colors"
+        >
           Create Account
         </Button>
       </form>

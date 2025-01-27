@@ -25,7 +25,9 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#ea384c",
+          light: "#ff6b7d",
+          dark: "#d41e31",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -58,8 +60,16 @@ export default {
           rejected: "#EF4444",
         },
         brand: {
-          red: "#FF0000",
+          red: "#ea384c",
+          gray: {
+            light: "#e6e9f0",
+            medium: "#8A898C",
+            dark: "#222222",
+          },
         },
+      },
+      backgroundImage: {
+        'gradient-red': 'linear-gradient(90deg, hsla(24, 100%, 83%, 1) 0%, hsla(341, 91%, 68%, 1) 100%)',
       },
       borderRadius: {
         lg: "var(--radius)",
