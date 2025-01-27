@@ -9,7 +9,7 @@ export interface Meeting {
   meetingTime: string;
   clientEmails: string;
   teamEmails: string;
-  status: "onboarded" | "active" | "systemUser" | "fullyCompliant";
+  status: "pending" | "approved" | "rejected" | "referred" | "onboarded" | "active" | "systemUser" | "fullyCompliant";
   dateSubmitted: string;
 }
 
