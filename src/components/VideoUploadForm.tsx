@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { PlayCircle } from "lucide-react";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
 export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) => {
   const { toast } = useToast();
@@ -13,30 +15,50 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [showVideo, setShowVideo] = useState(false);
 
-  useEffect(() => {
-    const storedVideo = localStorage.getItem("mlPayrollVideo");
-    if (storedVideo) {
-      setVideoUrl(storedVideo);
-    }
-  }, []);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (videoFile) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        localStorage.setItem("mlPayrollVideo", base64String);
-        setVideoUrl(base64String);
-      };
-      reader.readAsDataURL(videoFile);
+      if (videoFile.size > MAX_FILE_SIZE) {
+        toast({
+          title: "Error",
+          description: "Video file size must be less than 5MB. Please compress your video or choose a smaller file.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      try {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          try {
+            const base64String = reader.result as string;
+            localStorage.setItem("mlPayrollVideo", base64String);
+            setVideoUrl(base64String);
+            toast({
+              title: "Success!",
+              description: "Video material uploaded successfully",
+            });
+            setVideoTitle("");
+            setVideoFile(null);
+          } catch (error) {
+            if (error instanceof Error) {
+              toast({
+                title: "Upload Failed",
+                description: "The video file is too large for browser storage. Please use a smaller file.",
+                variant: "destructive",
+              });
+            }
+          }
+        };
+        reader.readAsDataURL(videoFile);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to process video file",
+          variant: "destructive",
+        });
+      }
     }
-    toast({
-      title: "Success!",
-      description: "Video material uploaded successfully",
-    });
-    setVideoTitle("");
-    setVideoFile(null);
   };
 
   const handleWatchVideo = () => {
@@ -63,7 +85,7 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
             />
           </div>
           <div>
-            <Label htmlFor="videoFile">Video File</Label>
+            <Label htmlFor="videoFile">Video File (Max 5MB)</Label>
             <Input
               id="videoFile"
               type="file"
