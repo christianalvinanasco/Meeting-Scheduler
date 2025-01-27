@@ -64,6 +64,11 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
     toast({
       title: "Account Updated",
       description: `${editCompanyName}'s account has been updated.`,
+      style: {
+        backgroundColor: "green", // Light green background
+        color: "white", // Dark green text
+        border: "red", // Green border
+      },
     });
     setShowEditDialog(false);
   };
@@ -139,6 +144,14 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
           <DialogHeader>
             <DialogTitle>Edit Client Account</DialogTitle>
           </DialogHeader>
+          <div>
+              <Label htmlFor="editCompanyName">Company Name</Label>
+              <Input
+                id="editCompanyName"
+                value={editCompanyName}
+                onChange={(e) => setEditCompanyName(e.target.value)}
+              />
+            </div>
           <div className="space-y-4">
             <div>
               <Label htmlFor="editUsername">Username</Label>
@@ -146,14 +159,6 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
                 id="editUsername"
                 value={editUsername}
                 onChange={(e) => setEditUsername(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="editCompanyName">Company Name</Label>
-              <Input
-                id="editCompanyName"
-                value={editCompanyName}
-                onChange={(e) => setEditCompanyName(e.target.value)}
               />
             </div>
             <div>

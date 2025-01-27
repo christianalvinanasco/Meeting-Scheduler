@@ -34,6 +34,7 @@ const Index = () => {
     toast({
       title: "Welcome back!",
       description: "Logged in successfully",
+      className: "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
     });
   };
 
@@ -92,7 +93,7 @@ const Index = () => {
           <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
             <div className="flex flex-col justify-center space-y-6">
               <img 
-                src="/lovable-uploads/04bf138c-8fee-4b16-8631-c3deaf4806c2.png" 
+                src="/images/ml-logo.png" 
                 alt="ML Logo" 
                 className="h-24 object-contain mb-8"
               />
@@ -121,7 +122,7 @@ const Index = () => {
             </div>
             <div className="hidden md:block">
               <img 
-                src="/lovable-uploads/b894b7d3-4cad-409d-b076-092346bb35d2.png"
+                src="/images/ml-payroll.png"
                 alt="ML Payroll"
                 className="w-full h-full object-cover rounded-lg"
               />

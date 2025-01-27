@@ -32,6 +32,11 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
     toast({
       title: "Success!",
       description: `Account created for ${companyName}`,
+      style: {
+        backgroundColor: "green", // Light green background
+        color: "white", // Dark green text
+        border: "red", // Green border
+      },
     });
     
     setUsername("");

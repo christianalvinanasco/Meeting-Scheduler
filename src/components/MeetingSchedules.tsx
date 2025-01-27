@@ -5,6 +5,7 @@ import { Badge } from "./ui/badge";
 import { Meeting } from "@/types/user";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { ScrollArea } from "./ui/scroll-area";
 
 export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string }) => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
@@ -14,12 +15,12 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
     const storedMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
     const typedMeetings = storedMeetings.map((meeting: any) => ({
       ...meeting,
-      status: meeting.status as Meeting['status']
+      status: meeting.status as Meeting["status"],
     }));
     setMeetings(typedMeetings);
   }, []);
 
-  const getStatusColor = (status: Meeting['status']) => {
+  const getStatusColor = (status: Meeting["status"]) => {
     switch (status) {
       case "approved":
         return "bg-green-500 text-white";
@@ -42,13 +43,12 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
     }
   };
 
-  const handleStatusChange = (meetingId: number, newStatus: Meeting['status']) => {
-    const updatedMeetings = meetings.map(meeting => {
+  const handleStatusChange = (meetingId: number, newStatus: Meeting["status"]) => {
+    const updatedMeetings = meetings.map((meeting) => {
       if (meeting.id === meetingId) {
         let finalStatus = newStatus;
         let toastMessage = "";
 
-        // Handle main admin actions
         if (userRole === "main_admin") {
           if (newStatus === "rejected") {
             finalStatus = "referred";
@@ -56,17 +56,15 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
           } else if (newStatus === "approved") {
             toastMessage = "Meeting has been approved.";
           }
-        }
-        // Handle second admin actions
-        else if (userRole === "second_admin") {
+        } else if (userRole === "second_admin") {
           if (newStatus === "rejected") {
             toastMessage = "Meeting has been rejected.";
           } else if (newStatus === "approved") {
             toastMessage = "Meeting has been approved.";
           }
-        }
-        // Handle status updates for approved meetings
-        else if (["onboarded", "active", "systemUser", "fullyCompliant"].includes(newStatus)) {
+        } else if (
+          ["onboarded", "active", "systemUser", "fullyCompliant"].includes(newStatus)
+        ) {
           toastMessage = `Meeting status has been updated to ${newStatus}.`;
         }
 
@@ -79,7 +77,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
       }
       return meeting;
     });
-    
+
     setMeetings(updatedMeetings);
     localStorage.setItem("meetings", JSON.stringify(updatedMeetings));
   };
@@ -93,13 +91,13 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
         { value: "onboarded", label: "Onboarded" },
         { value: "active", label: "Active" },
         { value: "systemUser", label: "System User" },
-        { value: "fullyCompliant", label: "Fully Compliant" }
+        { value: "fullyCompliant", label: "Fully Compliant" },
       ];
     }
     if (userRole === "second_admin") {
       return [
         { value: "approved", label: "Approve" },
-        { value: "rejected", label: "Reject" }
+        { value: "rejected", label: "Reject" },
       ];
     }
     return [];
@@ -108,52 +106,56 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
   return (
     <Card className="p-6">
       <h2 className="text-2xl font-bold mb-6">Meeting Schedules</h2>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Company Name</TableHead>
-            <TableHead>Contact Person</TableHead>
-            <TableHead>Meeting Date</TableHead>
-            <TableHead>Meeting Time</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Date Submitted</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {meetings.map((meeting) => (
-            <TableRow key={meeting.id}>
-              <TableCell>{meeting.companyName}</TableCell>
-              <TableCell>{meeting.contactPerson}</TableCell>
-              <TableCell>{meeting.meetingDate}</TableCell>
-              <TableCell>{meeting.meetingTime}</TableCell>
-              <TableCell>
-                {(userRole === "main_admin" || userRole === "second_admin") ? (
-                  <Select 
-                    defaultValue={meeting.status}
-                    onValueChange={(value) => handleStatusChange(meeting.id, value as Meeting['status'])}
-                  >
-                    <SelectTrigger className={getStatusColor(meeting.status)}>
-                      <SelectValue>{meeting.status}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getStatusOptions().map(option => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <Badge className={getStatusColor(meeting.status)}>
-                    {meeting.status}
-                  </Badge>
-                )}
-              </TableCell>
-              <TableCell>{meeting.dateSubmitted}</TableCell>
+      <ScrollArea className="h-[60vh] pr-4">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Company Name</TableHead>
+              <TableHead>Contact Person</TableHead>
+              <TableHead>Meeting Date</TableHead>
+              <TableHead>Meeting Time</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date Submitted</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {meetings.map((meeting) => (
+              <TableRow key={meeting.id}>
+                <TableCell>{meeting.companyName}</TableCell>
+                <TableCell>{meeting.contactPerson}</TableCell>
+                <TableCell>{meeting.meetingDate}</TableCell>
+                <TableCell>{meeting.meetingTime}</TableCell>
+                <TableCell>
+                  {userRole === "main_admin" || userRole === "second_admin" ? (
+                    <Select
+                      defaultValue={meeting.status}
+                      onValueChange={(value) =>
+                        handleStatusChange(meeting.id, value as Meeting["status"])
+                      }
+                    >
+                      <SelectTrigger className={getStatusColor(meeting.status)}>
+                        <SelectValue>{meeting.status}</SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getStatusOptions().map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Badge className={getStatusColor(meeting.status)}>
+                      {meeting.status}
+                    </Badge>
+                  )}
+                </TableCell>
+                <TableCell>{meeting.dateSubmitted}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </ScrollArea>
     </Card>
   );
 };

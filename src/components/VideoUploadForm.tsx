@@ -37,6 +37,11 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
             toast({
               title: "Success!",
               description: "Video material uploaded successfully",
+              style: {
+                backgroundColor: "green", // Light green background
+                color: "white", // Dark green text
+                border: "red", // Green border
+              },
             });
             setVideoTitle("");
             setVideoFile(null);

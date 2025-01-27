@@ -28,11 +28,11 @@ export const Header = () => {
       <div className="flex justify-between items-center p-4 bg-white shadow-md">
         <div className="flex items-center space-x-2">
           <img 
-            src="/lovable-uploads/04bf138c-8fee-4b16-8631-c3deaf4806c2.png" 
+            src="/images/ml-logo.png" 
             alt="ML Logo" 
             className="h-10 w-auto"
           />
-          <span className="text-primary font-bold text-xl">ML Payroll PRO</span>
+          
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
