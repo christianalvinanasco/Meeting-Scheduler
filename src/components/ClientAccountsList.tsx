@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ScrollArea } from "./ui/scroll-area"; // Import ScrollArea
 
 interface ClientAccountsListProps {
   accounts: ClientAccount[];
@@ -43,9 +44,9 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
       title: "Account Deleted",
       description: `${account.companyName}'s account has been deleted.`,
       style: {
-        backgroundColor: "red", // Light green background
-        color: "white", // Dark green text
-        border: "black", // Green border
+        backgroundColor: "red",
+        color: "white",
+        border: "black",
       },
     });
   };
@@ -70,9 +71,9 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
       title: "Account Updated",
       description: `${editCompanyName}'s account has been updated.`,
       style: {
-        backgroundColor: "green", // Light green background
-        color: "white", // Dark green text
-        border: "red", // Green border
+        backgroundColor: "green",
+        color: "white",
+        border: "red",
       },
     });
     setShowEditDialog(false);
@@ -88,61 +89,63 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Client Accounts</h3>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Company Name</TableHead>
-            <TableHead>Username</TableHead>
-            <TableHead>Password</TableHead>
-            <TableHead>Date Created</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {accounts.map((account) => (
-            <TableRow key={account.id}>
-              <TableCell>{account.companyName}</TableCell>
-              <TableCell>{account.username}</TableCell>
-              <TableCell className="relative">
-                <span className="flex items-center gap-2">
-                  {showPasswords[account.id] ? account.password : '••••••••'}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => togglePasswordVisibility(account.id)}
-                    className="h-4 w-4"
-                  >
-                    {showPasswords[account.id] ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </span>
-              </TableCell>
-              <TableCell>{account.dateCreated}</TableCell>
-              <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => handleEdit(account)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => handleDelete(account)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
+      <ScrollArea className="h-[60vh] pr-4"> {/* Add ScrollArea with height */}
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Company Name</TableHead>
+              <TableHead>Username</TableHead>
+              <TableHead>Password</TableHead>
+              <TableHead>Date Created</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {accounts.map((account) => (
+              <TableRow key={account.id}>
+                <TableCell>{account.companyName}</TableCell>
+                <TableCell>{account.username}</TableCell>
+                <TableCell className="relative">
+                  <span className="flex items-center gap-2">
+                    {showPasswords[account.id] ? account.password : '••••••••'}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => togglePasswordVisibility(account.id)}
+                      className="h-4 w-4"
+                    >
+                      {showPasswords[account.id] ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </span>
+                </TableCell>
+                <TableCell>{account.dateCreated}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleEdit(account)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => handleDelete(account)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </ScrollArea>
 
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
