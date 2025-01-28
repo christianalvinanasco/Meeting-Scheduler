@@ -134,6 +134,7 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
               placeholder="Enter email addresses separated by commas"
               required
             />
+            <span>Example: 123@gmail.com, abc@gmail.com, xyz@gmail.com</span>
           </div>
 
           <div>
@@ -145,6 +146,7 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
               placeholder="Enter email addresses separated by commas"
               required
             />
+            <span>Example: 123@gmail.com, abc@gmail.com, xyz@gmail.com</span>
           </div>
         </div>
 

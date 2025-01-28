@@ -42,6 +42,11 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
     toast({
       title: "Account Deleted",
       description: `${account.companyName}'s account has been deleted.`,
+      style: {
+        backgroundColor: "red", // Light green background
+        color: "white", // Dark green text
+        border: "black", // Green border
+      },
     });
   };
 

@@ -6,66 +6,58 @@ import { Meeting } from "@/types/user";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "./ui/scroll-area";
+import { format, parse } from "date-fns";
 
 export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string }) => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const { toast } = useToast();
+  const [filteredMeetings, setFilteredMeetings] = useState<Meeting[]>([]);
+  const [statusFilter, setStatusFilter] = useState<Meeting["status"] | "all">("all");
+  const [monthFilter, setMonthFilter] = useState<string>("all");
 
   useEffect(() => {
     const storedMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
     const typedMeetings = storedMeetings.map((meeting: any) => ({
       ...meeting,
-      status: meeting.status as Meeting["status"],
+      status: meeting.status || "pending", // Ensure default status is "pending"
     }));
     setMeetings(typedMeetings);
+    setFilteredMeetings(typedMeetings);
   }, []);
 
-  const getStatusColor = (status: Meeting["status"]) => {
-    switch (status) {
-      case "approved":
-        return "bg-green-500 text-white";
-      case "rejected":
-        return "bg-red-500 text-white";
-      case "referred":
-        return "bg-yellow-500 text-white";
-      case "pending":
-        return "bg-blue-500 text-white";
-      case "onboarded":
-        return "bg-blue-500 text-white";
-      case "active":
-        return "bg-green-500 text-white";
-      case "systemUser":
-        return "bg-purple-500 text-white";
-      case "fullyCompliant":
-        return "bg-yellow-500 text-white";
-      default:
-        return "bg-gray-500 text-white";
+  useEffect(() => {
+    let filtered = [...meetings];
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((meeting) => meeting.status === statusFilter);
     }
-  };
+    if (monthFilter !== "all") {
+      filtered = filtered.filter((meeting) => {
+        const meetingDate = parse(meeting.meetingDate, "yyyy-MM-dd", new Date());
+        const meetingMonth = format(meetingDate, "MMMM").toLowerCase();
+        return meetingMonth === monthFilter.toLowerCase();
+      });
+    }
+    setFilteredMeetings(filtered);
+  }, [statusFilter, monthFilter, meetings]);
 
   const handleStatusChange = (meetingId: number, newStatus: Meeting["status"]) => {
     const updatedMeetings = meetings.map((meeting) => {
       if (meeting.id === meetingId) {
-        let finalStatus = newStatus;
         let toastMessage = "";
 
-        if (userRole === "main_admin") {
-          if (newStatus === "rejected") {
-            finalStatus = "referred";
-            toastMessage = "Meeting has been referred to the second admin for review.";
-          } else if (newStatus === "approved") {
-            toastMessage = "Meeting has been approved.";
-          }
-        } else if (userRole === "second_admin") {
-          if (newStatus === "rejected") {
-            toastMessage = "Meeting has been rejected.";
-          } else if (newStatus === "approved") {
-            toastMessage = "Meeting has been approved.";
-          }
+        if (userRole === "main_admin" && ["approved", "referred"].includes(newStatus)) {
+          toastMessage = newStatus === "approved"
+            ? "Meeting has been approved by the first admin."
+            : "Meeting has been referred to the second admin.";
         } else if (
-          ["onboarded", "active", "systemUser", "fullyCompliant"].includes(newStatus)
+          userRole === "second_admin" &&
+          ["approved", "reschedule"].includes(newStatus)
         ) {
-          toastMessage = `Meeting status has been updated to ${newStatus}.`;
+          toastMessage = newStatus === "approved"
+            ? "Meeting has been approved by the second admin."
+            : "Meeting has been marked for rescheduling.";
+        } else {
+          return meeting; // Invalid status for the role, do nothing
         }
 
         toast({
@@ -73,7 +65,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
           description: toastMessage,
         });
 
-        return { ...meeting, status: finalStatus };
+        return { ...meeting, status: newStatus };
       }
       return meeting;
     });
@@ -85,27 +77,64 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
   const getStatusOptions = () => {
     if (userRole === "main_admin") {
       return [
-        { value: "pending", label: "Pending" },
-        { value: "approved", label: "Approve" },
-        { value: "rejected", label: "Reject & Refer" },
-        { value: "onboarded", label: "Onboarded" },
-        { value: "active", label: "Active" },
-        { value: "systemUser", label: "System User" },
-        { value: "fullyCompliant", label: "Fully Compliant" },
+        { value: "Confirmed", label: "Confirm" },
+        { value: "Endorsed", label: "Refer to Second Admin" },
       ];
     }
     if (userRole === "second_admin") {
       return [
-        { value: "approved", label: "Approve" },
-        { value: "rejected", label: "Reject" },
+        { value: "Confirmed", label: "Confirm" },
+        { value: "Rescheduled", label: "Request Reschedule" },
       ];
     }
     return [];
   };
 
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+  const statusOptions = ["Pending", "Confirmed", "Endorsed", "Rescheduled"];
+
   return (
     <Card className="p-6">
       <h2 className="text-2xl font-bold mb-6">Meeting Schedules</h2>
+      <div className="flex gap-4 mb-6">
+        <div className="flex-1">
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => setStatusFilter(value as Meeting["status"] | "all")}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              {statusOptions.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex-1">
+          <Select value={monthFilter} onValueChange={setMonthFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by Month" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Months</SelectItem>
+              {months.map((month) => (
+                <SelectItem key={month} value={month.toLowerCase()}>
+                  {month}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       <ScrollArea className="h-[60vh] pr-4">
         <Table>
           <TableHeader>
@@ -119,7 +148,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
             </TableRow>
           </TableHeader>
           <TableBody>
-            {meetings.map((meeting) => (
+            {filteredMeetings.map((meeting) => (
               <TableRow key={meeting.id}>
                 <TableCell>{meeting.companyName}</TableCell>
                 <TableCell>{meeting.contactPerson}</TableCell>
@@ -133,7 +162,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
                         handleStatusChange(meeting.id, value as Meeting["status"])
                       }
                     >
-                      <SelectTrigger className={getStatusColor(meeting.status)}>
+                      <SelectTrigger>
                         <SelectValue>{meeting.status}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
@@ -145,9 +174,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
                       </SelectContent>
                     </Select>
                   ) : (
-                    <Badge className={getStatusColor(meeting.status)}>
-                      {meeting.status}
-                    </Badge>
+                    <Badge>{meeting.status}</Badge>
                   )}
                 </TableCell>
                 <TableCell>{meeting.dateSubmitted}</TableCell>

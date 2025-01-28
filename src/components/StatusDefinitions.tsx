@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 
 const definitions = {
-  onboarded: "These clients have been successfully registered in the system but have not yet started using it. Follow up is required to insure progress and facilitate the transition to active use.",
+  onboarded: "Clients in this stage has been successfully registered in the system but have not yet started using it. Follow up is required to insure progress and facilitate the transition to active use.",
   active: "Clients in this stage have started enrolling their employees in the system, preparing for payroll disbursement. They are in the process of setting up their system for full operational use.",
   systemUser: "Clients at this stage have already pre-funded their accounts and are ready to proceed with payroll disbursement. They are fully utilizing the system for their payroll needs.",
   fullyCompliant: "These clients have met all the necessary requirements for accreditation. They are fully committed to using the system, and their account will be managed by the MCash support team for ongoing assistance and optimization."

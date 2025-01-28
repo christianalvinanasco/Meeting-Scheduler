@@ -34,7 +34,8 @@ const Index = () => {
     toast({
       title: "Welcome back!",
       description: "Logged in successfully",
-      className: "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      className: "bg-green-100 border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2shadow-lg rounded-lg",
+      duration: 3000,
     });
   };
 
