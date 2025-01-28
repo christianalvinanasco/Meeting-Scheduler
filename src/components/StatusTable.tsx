@@ -63,6 +63,12 @@ const initialCompanyData: CompanyData[] = [
     dateStarted: "2024-01-20"
   },
   {
+    companyName: "ABC Corp",
+    status: "Active",
+    dateOnboarded: "2024-01-15",
+    dateStarted: "2024-01-20"
+  },
+  {
     companyName: "XYZ Ltd",
     status: "Onboarded",
     dateOnboarded: "2024-02-01",
