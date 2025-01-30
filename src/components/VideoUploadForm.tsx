@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { PlayCircle } from "lucide-react";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
+const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024; // 5GB limit
 
 export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) => {
   const { toast } = useToast();
@@ -21,7 +21,7 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
       if (videoFile.size > MAX_FILE_SIZE) {
         toast({
           title: "Error",
-          description: "Video file size must be less than 5MB. Please compress your video or choose a smaller file.",
+          description: "Video file size must be less than 5GB. Please compress your video or choose a smaller file.",
           variant: "destructive",
         });
         return;
@@ -90,7 +90,7 @@ export const VideoUploadForm = ({ userRole = "client" }: { userRole?: string }) 
             />
           </div>
           <div>
-            <Label htmlFor="videoFile">Video File (Max 5MB)</Label>
+            <Label htmlFor="videoFile">Video File (Max 5GB)</Label>
             <Input
               id="videoFile"
               type="file"

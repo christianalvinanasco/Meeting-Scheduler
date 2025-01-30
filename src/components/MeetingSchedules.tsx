@@ -19,7 +19,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
     const storedMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
     const typedMeetings = storedMeetings.map((meeting: any) => ({
       ...meeting,
-      status: meeting.status || "pending", // Ensure default status is "pending"
+      status: meeting.status || "Pending", // Ensure default status is "pending"
     }));
     setMeetings(typedMeetings);
     setFilteredMeetings(typedMeetings);
@@ -46,15 +46,15 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
         let toastMessage = "";
 
         if (userRole === "main_admin" && ["approved", "referred"].includes(newStatus)) {
-          toastMessage = newStatus === "approved"
-            ? "Meeting has been approved by the first admin."
-            : "Meeting has been referred to the second admin.";
+          toastMessage = newStatus === "Confirmed"
+            ? "Meeting has been approved by the MCash Division."
+            : "Meeting has been referred to another division.";
         } else if (
           userRole === "second_admin" &&
           ["approved", "reschedule"].includes(newStatus)
         ) {
-          toastMessage = newStatus === "approved"
-            ? "Meeting has been approved by the second admin."
+          toastMessage = newStatus === "Confirmed"
+            ? "Meeting has been approved by the MCash Division."
             : "Meeting has been marked for rescheduling.";
         } else {
           return meeting; // Invalid status for the role, do nothing

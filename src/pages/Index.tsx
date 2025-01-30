@@ -28,15 +28,57 @@ const Index = () => {
   const [clientAccounts, setClientAccounts] = useState<ClientAccount[]>([]);
   const { toast } = useToast();
 
+  // Predefined admin credentials
+  const mainAdminCredentials = { username: "mcashdivision@mlhuillier.com", password: "mcashdivision" };
+  const otherAdminCredentials = { username: "spbdd@mlhuillier.com", password: "spbdd" };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoggedIn(true);
-    toast({
-      title: "Welcome back!",
-      description: "Logged in successfully",
-      className: "bg-green-100 border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2shadow-lg rounded-lg",
-      duration: 3000,
-    });
+
+    // Check if it's a client account
+    const clientAccount = clientAccounts.find(
+      account => account.username === username && account.password === password
+    );
+
+    if (clientAccount) {
+      setUserRole("client");
+      setIsLoggedIn(true);
+      toast({
+        title: "Welcome!",
+        description: `Logged in as ${clientAccount.companyName}`,
+      });
+      return;
+    }
+
+    // Match the credentials
+    const isMainAdmin = username === mainAdminCredentials.username && password === mainAdminCredentials.password;
+    const isOtherAdmin = username === otherAdminCredentials.username && password === otherAdminCredentials.password;
+
+    if (isMainAdmin) {
+      setIsLoggedIn(true);
+      setUserRole("main_admin");
+      toast({
+        title: "Welcome back, MCash Division!",
+        description: "Logged in successfully",
+        className: "bg-green-100 border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
+        duration: 3000,
+      });
+    } else if (isOtherAdmin) {
+      setIsLoggedIn(true);
+      setUserRole("second_admin");
+      toast({
+        title: "Welcome back, SPBDD!",
+        description: "Logged in successfully",
+        className: "bg-green-100 border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
+        duration: 3000,
+      });
+    } else {
+      toast({
+        title: "Login Failed",
+        description: "Invalid credentials.",
+        className: "bg-red-100 border-red-500 text-red-800",
+      });
+    }
   };
 
   const handleAddAccount = (newAccount: ClientAccount) => {
@@ -48,44 +90,73 @@ const Index = () => {
     });
   };
 
-  const dashboardCards = [
-    {
-      title: "Schedule a Virtual Demo",
-      icon: Video,
-      onClick: () => setShowDemoForm(true),
-    },
-    {
-      title: "Check Meeting Schedules",
-      icon: Calendar,
-      onClick: () => setShowMeetings(true),
-    },
-    {
-      title: "Track Referral Status",
-      icon: Users,
-      onClick: () => setShowReferralStatus(true),
-    },
-    {
-      title: "ML Payroll PRO Virtual Walkthrough",
-      icon: Play,
-      onClick: () => setShowVideoUpload(true),
-    },
-  ];
-
-  // Add client account management for admin users
-  if (userRole === "main_admin") {
-    dashboardCards.push(
+  // Define available features based on user role
+  const getDashboardCards = () => {
+    const baseCards = [
       {
-        title: "Add Client Account",
-        icon: UserPlus,
-        onClick: () => setShowAddClient(true),
+        title: "Schedule a Virtual Demo",
+        icon: Video,
+        onClick: () => setShowDemoForm(true),
       },
       {
-        title: "View Client Accounts",
-        icon: List,
-        onClick: () => setShowClientAccounts(true),
-      }
-    );
-  }
+        title: "Check Meeting Schedules",
+        icon: Calendar,
+        onClick: () => setShowMeetings(true),
+      },
+    ];
+
+    if (userRole === "main_admin") {
+      return [
+        ...baseCards,
+        {
+          title: "Track Referral Status",
+          icon: Users,
+          onClick: () => setShowReferralStatus(true),
+        },
+        {
+          title: "ML Payroll PRO Virtual Walkthrough",
+          icon: Play,
+          onClick: () => setShowVideoUpload(true),
+        },
+        {
+          title: "Add Client Account",
+          icon: UserPlus,
+          onClick: () => setShowAddClient(true),
+        },
+        {
+          title: "View Client Accounts",
+          icon: List,
+          onClick: () => setShowClientAccounts(true),
+        },
+      ];
+    }
+
+    if (userRole === "second_admin") {
+      return [
+        ...baseCards,
+        {
+          title: "Track Referral Status",
+          icon: Users,
+          onClick: () => setShowReferralStatus(true),
+        },
+        {
+          title: "ML Payroll PRO Virtual Walkthrough",
+          icon: Play,
+          onClick: () => setShowVideoUpload(true),
+        },
+      ];
+    }
+
+    // Client role
+    return [
+      ...baseCards,
+      {
+        title: "ML Payroll PRO Virtual Walkthrough",
+        icon: Play,
+        onClick: () => setShowVideoUpload(true),
+      },
+    ];
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -142,7 +213,7 @@ const Index = () => {
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {dashboardCards.map((card) => (
+              {getDashboardCards().map((card) => (
                 <Card 
                   key={card.title}
                   className="p-8 text-center hover:shadow-lg transition-shadow cursor-pointer group bg-white"
@@ -157,23 +228,28 @@ const Index = () => {
             </div>
           </div>
 
-          <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Add New Client Account</DialogTitle>
-              </DialogHeader>
-              <AddClientForm onAccountAdded={handleAddAccount} />
-            </DialogContent>
-          </Dialog>
+          {/* Dialogs */}
+          {userRole === "main_admin" && (
+            <>
+              <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Add New Client Account</DialogTitle>
+                  </DialogHeader>
+                  <AddClientForm onAccountAdded={handleAddAccount} />
+                </DialogContent>
+              </Dialog>
 
-          <Dialog open={showClientAccounts} onOpenChange={setShowClientAccounts}>
-            <DialogContent className="max-w-4xl">
-              <DialogHeader>
-                <DialogTitle>Client Accounts</DialogTitle>
-              </DialogHeader>
-              <ClientAccountsList accounts={clientAccounts} setAccounts={setClientAccounts} />
-            </DialogContent>
-          </Dialog>
+              <Dialog open={showClientAccounts} onOpenChange={setShowClientAccounts}>
+                <DialogContent className="max-w-4xl">
+                  <DialogHeader>
+                    <DialogTitle>Client Accounts</DialogTitle>
+                  </DialogHeader>
+                  <ClientAccountsList accounts={clientAccounts} setAccounts={setClientAccounts} />
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
 
           <Dialog open={showDemoForm} onOpenChange={setShowDemoForm}>
             <DialogContent className="max-w-2xl">
@@ -196,14 +272,16 @@ const Index = () => {
             </DialogContent>
           </Dialog>
 
-          <Dialog open={showReferralStatus} onOpenChange={setShowReferralStatus}>
-            <DialogContent className="max-w-4xl">
-              <DialogHeader>
-                <DialogTitle>Track Referral Status</DialogTitle>
-              </DialogHeader>
-              <ReferralStatus />
-            </DialogContent>
-          </Dialog>
+          {(userRole === "main_admin" || userRole === "second_admin") && (
+            <Dialog open={showReferralStatus} onOpenChange={setShowReferralStatus}>
+              <DialogContent className="max-w-4xl">
+                <DialogHeader>
+                  <DialogTitle>Track Referral Status</DialogTitle>
+                </DialogHeader>
+                <ReferralStatus />
+              </DialogContent>
+            </Dialog>
+          )}
 
           <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
             <DialogContent className="max-w-2xl">

@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "./ui/scroll-area";
 
 const timeSlots = [
+  "8:30 - 10:00",
   "10:00 - 11:30",
   "13:00 - 14:30",
   "14:30 - 16:00",
@@ -16,6 +17,11 @@ const timeSlots = [
 ];
 
 export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () => void; userRole?: string }) => {
+  // Only render the form for clients
+  if (userRole === "main_admin" || userRole === "second_admin") {
+    return null; // Return null to prevent rendering for admins
+  }
+
   const navigate = useNavigate();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -26,33 +32,33 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
     meetingTime: "",
     clientEmails: "",
     teamEmails: "",
-    status: "pending"
+    status: "Pending"
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const existingMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
-    
+
     const newMeeting = {
       ...formData,
       id: Date.now(),
       dateSubmitted: new Date().toLocaleDateString(),
-      status: userRole === "main_admin" ? "approved" : "pending"
+      status: userRole === "main_admin" ? "Confirmed" : "Pending"
     };
-    
+
     localStorage.setItem("meetings", JSON.stringify([...existingMeetings, newMeeting]));
-    
+
     toast({
       title: "Success!",
-      description: "Thank you! You're request has been submitted. Please wait for comfirmation from ML Payroll Busines Development.",
+      description: "Thank you! Your request has been submitted. Please wait for confirmation from ML Payroll Business Development.",
       style: {
         backgroundColor: "green", // Light green background
         color: "white", // Dark green text
         border: "red", // Green border
       },
     });
-    
+
     onClose();
   };
 
@@ -76,7 +82,7 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
               required
             />
           </div>
-          
+
           <div>
             <Label htmlFor="contactPerson">Contact Person</Label>
             <Input

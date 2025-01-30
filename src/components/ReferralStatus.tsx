@@ -5,7 +5,8 @@ import { StatusDefinitions } from "./StatusDefinitions";
 export const ReferralStatus = () => {
   return (
     <Card className="p-6">
-      <StatusTable />
+      <StatusTable userRole="main_admin" />
+
       <StatusDefinitions />
     </Card>
   );

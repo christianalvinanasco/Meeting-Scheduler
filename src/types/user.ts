@@ -1,4 +1,4 @@
-export type UserRole = "main_admin" | "second_admin" | "first_division" | "other_division" | "client";
+export type UserRole = "main_admin" | "second_admin" | "client";
 
 export interface Meeting {
   id: number;
@@ -9,7 +9,7 @@ export interface Meeting {
   meetingTime: string;
   clientEmails: string;
   teamEmails: string;
-  status: "pending" | "approved" | "rejected" | "referred" | "onboarded" | "active" | "systemUser" | "fullyCompliant";
+  status: "Pending" | "Confirmed" | "Endorsed" | "Rescheduled";
   dateSubmitted: string;
 }
 
