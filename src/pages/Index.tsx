@@ -30,7 +30,7 @@ const Index = () => {
 
   // Predefined admin credentials
   const mainAdminCredentials = { username: "mcashdivision@mlhuillier.com", password: "mcashdivision" };
-  const otherAdminCredentials = { username: "spbdd@mlhuillier.com", password: "spbdd" };
+  const otherAdminCredentials = { username: "spbddivision@mlhuillier.com", password: "spbdd" };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +67,7 @@ const Index = () => {
       setIsLoggedIn(true);
       setUserRole("second_admin");
       toast({
-        title: "Welcome back, SPBDD!",
+        title: "Welcome back, Sales Partnership and Business Development Division!",
         description: "Logged in successfully",
         className: "bg-green-100 border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
         duration: 3000,
@@ -203,12 +203,12 @@ const Index = () => {
         </div>
       ) : (
         <div className="animate-fadeIn">
-          <Header />
+          <Header userRole={userRole} />
           <div className="p-6 space-y-12 max-w-7xl mx-auto">
             <header className="text-center space-y-4">
               <h1 className="text-6xl font-bold text-red-600">WELCOME!</h1>
               <p className="text-2xl text-gray-600">
-                How can I support you today?
+                How can I support you today?  
               </p>
             </header>
 
@@ -268,7 +268,7 @@ const Index = () => {
               <DialogHeader>
                 <DialogTitle>Meeting Schedules</DialogTitle>
               </DialogHeader>
-              <MeetingSchedules />
+              <MeetingSchedules userRole={"main_admin"}/>
             </DialogContent>
           </Dialog>
 

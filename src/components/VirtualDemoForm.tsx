@@ -9,11 +9,17 @@ import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "./ui/scroll-area";
 
 const timeSlots = [
-  "8:30 - 10:00",
   "10:00 - 11:30",
   "13:00 - 14:30",
   "14:30 - 16:00",
   "16:00 - 17:30"
+];
+
+const payrollOperationStatuses = [
+  "No system; payroll is computed manually and paid in cash",
+  "Payroll system in place, but a disbursement channel is needed for cash payroll",
+  "No system, but only a disbursement channel is needed for salary payments",
+  "Others"
 ];
 
 export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () => void; userRole?: string }) => {
@@ -32,6 +38,8 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
     meetingTime: "",
     clientEmails: "",
     teamEmails: "",
+    payrollStatus: "",
+    otherPayrollStatus: "",
     status: "Pending"
   });
 
@@ -44,7 +52,8 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
       ...formData,
       id: Date.now(),
       dateSubmitted: new Date().toLocaleDateString(),
-      status: userRole === "main_admin" ? "Confirmed" : "Pending"
+      status: userRole === "main_admin" ? "approved" : "pending",
+      payrollStatus: formData.payrollStatus === "Others" ? formData.otherPayrollStatus : formData.payrollStatus
     };
 
     localStorage.setItem("meetings", JSON.stringify([...existingMeetings, newMeeting]));
@@ -82,9 +91,38 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
               required
             />
           </div>
-
+          <Label>Client Current Status of Payroll Operations</Label>
+            <Select 
+              onValueChange={(value) => setFormData(prev => ({ ...prev, payrollStatus: value }))}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select client current status" />
+              </SelectTrigger>
+              <SelectContent>
+                {payrollOperationStatuses.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {status}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {formData.payrollStatus === "Others" && (
+            <div>
+              <Label htmlFor="otherPayrollStatus">Please specify other status</Label>
+              <Input
+                id="otherPayrollStatus"
+                value={formData.otherPayrollStatus}
+                onChange={handleChange("otherPayrollStatus")}
+                required
+                placeholder="Enter your current payroll status"
+              />
+            </div>
+          )}
           <div>
-            <Label htmlFor="contactPerson">Contact Person</Label>
+          <div>
+            <Label htmlFor="contactPerson">Client Contact Person</Label>
             <Input
               id="contactPerson"
               value={formData.contactPerson}
@@ -94,7 +132,7 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
           </div>
 
           <div>
-            <Label htmlFor="contactNumber">Contact Number</Label>
+            <Label htmlFor="contactNumber">Client Contact Number</Label>
             <Input
               id="contactNumber"
               value={formData.contactNumber}

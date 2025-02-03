@@ -6,7 +6,6 @@ export const ReferralStatus = () => {
   return (
     <Card className="p-6">
       <StatusTable userRole="main_admin" />
-
       <StatusDefinitions />
     </Card>
   );

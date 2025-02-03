@@ -15,12 +15,12 @@ import {
 import { Button } from "./ui/button";
 import { Menu, Bell, LogOut, FileText } from "lucide-react";
 
-export const Header = () => {
+export const Header = ({ userRole }) => {
   const navigate = useNavigate();
   const [showTerms, setShowTerms] = useState(false);
 
   const handleLogout = () => {
-    navigate("/");
+    navigate("/"); // Navigate to the login section
   };
 
   return (
@@ -32,29 +32,37 @@ export const Header = () => {
             alt="ML Logo" 
             className="h-10 w-auto"
           />
-          
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-brand-gray-dark hover:text-primary">
-              <Menu className="h-6 w-6" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem className="hover:bg-brand-gray-light hover:text-primary cursor-pointer">
-              <Bell className="mr-2 h-4 w-4" />
-              <span>Notifications</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setShowTerms(true)} className="hover:bg-brand-gray-light hover:text-primary cursor-pointer">
-              <FileText className="mr-2 h-4 w-4" />
-              <span>Terms and Conditions</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout} className="hover:bg-brand-gray-light hover:text-primary cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        
+        <div className="flex items-center space-x-4">
+          
+          {/* Dropdown Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-brand-gray-dark hover:text-primary">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {/* Conditionally render Notifications for Client only */}
+              {userRole === "client" && (
+                <DropdownMenuItem className="hover:bg-brand-gray-light hover:text-primary cursor-pointer">
+                  <Bell className="mr-2 h-4 w-4" />
+                  <span>Notifications</span>
+                </DropdownMenuItem>
+              )}
+
+              <DropdownMenuItem onClick={() => setShowTerms(true)} className="hover:bg-brand-gray-light hover:text-primary cursor-pointer">
+                <FileText className="mr-2 h-4 w-4" />
+                <span>Terms and Conditions</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout} className="hover:bg-brand-gray-light hover:text-primary cursor-pointer">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <Dialog open={showTerms} onOpenChange={setShowTerms}>

@@ -1,6 +1,10 @@
+import { ReactNode } from "react";
+
 export type UserRole = "main_admin" | "second_admin" | "client";
 
 export interface Meeting {
+  payrollStatus: ReactNode;
+  userId: number;
   id: number;
   companyName: string;
   contactPerson: string;
@@ -9,7 +13,7 @@ export interface Meeting {
   meetingTime: string;
   clientEmails: string;
   teamEmails: string;
-  status: "Pending" | "Confirmed" | "Endorsed" | "Rescheduled";
+  status: "Pending" | "Confirm" | "Endorse" | "Reschedule";
   dateSubmitted: string;
 }
 

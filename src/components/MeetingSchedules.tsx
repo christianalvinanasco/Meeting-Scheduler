@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { Card } from "./ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Badge } from "./ui/badge";
-import { Meeting } from "@/types/user";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "./ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Meeting } from "@/types/user";
 import { format, parse } from "date-fns";
 
-export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string }) => {
+export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "second_admin" }) => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const { toast } = useToast();
   const [filteredMeetings, setFilteredMeetings] = useState<Meeting[]>([]);
@@ -19,7 +18,8 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
     const storedMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
     const typedMeetings = storedMeetings.map((meeting: any) => ({
       ...meeting,
-      status: meeting.status || "Pending", // Ensure default status is "pending"
+      status: meeting.status || "Pending",
+      payrollStatus: meeting.payrollStatus || "Not Set",
     }));
     setMeetings(typedMeetings);
     setFilteredMeetings(typedMeetings);
@@ -45,17 +45,18 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
       if (meeting.id === meetingId) {
         let toastMessage = "";
 
-        if (userRole === "main_admin" && ["approved", "referred"].includes(newStatus)) {
-          toastMessage = newStatus === "Confirmed"
-            ? "Meeting has been approved by the MCash Division."
-            : "Meeting has been referred to another division.";
+        if (userRole === "main_admin" && ["Confirm", "Endorse"].includes(newStatus)) {
+          toastMessage =
+            newStatus === "Confirm"
+              ? "Meeting has been confirmed by the MCash Division."
+              : "Meeting has been endorsed to the other division.";
         } else if (
-          userRole === "second_admin" &&
-          ["approved", "reschedule"].includes(newStatus)
+          userRole === "second_admin" && ["Confirm", "Reschedule"].includes(newStatus)
         ) {
-          toastMessage = newStatus === "Confirmed"
-            ? "Meeting has been approved by the MCash Division."
-            : "Meeting has been marked for rescheduling.";
+          toastMessage =
+            newStatus === "Confirm"
+              ? "Meeting has been confirmed by the SPBDD."
+              : "Meeting has been marked for rescheduling.";
         } else {
           return meeting; // Invalid status for the role, do nothing
         }
@@ -63,6 +64,11 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
         toast({
           title: "Status Updated",
           description: toastMessage,
+          style: {
+            backgroundColor: "green",
+            color: "white",
+            border: "red",
+          },
         });
 
         return { ...meeting, status: newStatus };
@@ -74,27 +80,15 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
     localStorage.setItem("meetings", JSON.stringify(updatedMeetings));
   };
 
-  const getStatusOptions = () => {
-    if (userRole === "main_admin") {
-      return [
-        { value: "Confirmed", label: "Confirm" },
-        { value: "Endorsed", label: "Refer to Second Admin" },
-      ];
-    }
-    if (userRole === "second_admin") {
-      return [
-        { value: "Confirmed", label: "Confirm" },
-        { value: "Rescheduled", label: "Request Reschedule" },
-      ];
-    }
-    return [];
-  };
-
   const months = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December",
   ];
-  const statusOptions = ["Pending", "Confirmed", "Endorsed", "Rescheduled"];
+  
+  // Define available status options based on the user role
+  const statusOptions = userRole === "main_admin"
+    ? ["Confirm", "Endorse"]
+    : ["Confirm", "Reschedule"];
 
   return (
     <Card className="p-6">
@@ -135,6 +129,7 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
           </Select>
         </div>
       </div>
+
       <ScrollArea className="h-[60vh] pr-4">
         <Table>
           <TableHeader>
@@ -144,7 +139,9 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
               <TableHead>Meeting Date</TableHead>
               <TableHead>Meeting Time</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Payroll Status</TableHead>
               <TableHead>Date Submitted</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -155,28 +152,20 @@ export const MeetingSchedules = ({ userRole = "client" }: { userRole?: string })
                 <TableCell>{meeting.meetingDate}</TableCell>
                 <TableCell>{meeting.meetingTime}</TableCell>
                 <TableCell>
-                  {userRole === "main_admin" || userRole === "second_admin" ? (
-                    <Select
-                      defaultValue={meeting.status}
-                      onValueChange={(value) =>
-                        handleStatusChange(meeting.id, value as Meeting["status"])
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue>{meeting.status}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {getStatusOptions().map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <Badge>{meeting.status}</Badge>
-                  )}
+                  <select
+                    value={meeting.status || "Pending"}
+                    onChange={(e) => handleStatusChange(meeting.id, e.target.value as Meeting["status"])}
+                    className="border border-gray-300 rounded-md p-1"
+                  >
+                    <option value="Pending">Pending</option>
+                    {statusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
                 </TableCell>
+                <TableCell>{meeting.payrollStatus}</TableCell>
                 <TableCell>{meeting.dateSubmitted}</TableCell>
               </TableRow>
             ))}

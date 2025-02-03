@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button"; // Import the custom Button component
+import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -37,12 +37,6 @@ const initialCompanyData: CompanyData[] = [
   {
     companyName: "XYZ Ltd",
     status: "Onboarded",
-    dateOnboarded: "2024-02-01",
-    dateStarted: "2024-02-05",
-  },
-  {
-    companyName: "Alvin Company",
-    status: "Fully Compliant",
     dateOnboarded: "2024-02-01",
     dateStarted: "2024-02-05",
   },
@@ -108,14 +102,14 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        variant="ghost" // Use the variant prop
+                        variant="ghost"
                         className={`w-[130px] justify-between font-normal ${
                           company.status.toLowerCase() === "onboarded"
                             ? "text-yellow-600"
                             : company.status.toLowerCase() === "active"
-                            ? "text-blue-600"
-                            : company.status.toLowerCase() === "systemuser"
                             ? "text-green-600"
+                            : company.status.toLowerCase() === "systemuser"
+                            ? "text-blue-600"
                             : company.status.toLowerCase() === "fullycompliant"
                             ? "text-red-600"
                             : ""
@@ -134,9 +128,9 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
                             status === "onboarded"
                               ? "text-yellow-600"
                               : status === "active"
-                              ? "text-blue-600"
-                              : status === "systemUser"
                               ? "text-green-600"
+                              : status === "systemUser"
+                              ? "text-blue-600"
                               : status === "fullyCompliant"
                               ? "text-red-600"
                               : ""

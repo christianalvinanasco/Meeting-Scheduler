@@ -93,7 +93,6 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Company Name</TableHead>
               <TableHead>Username</TableHead>
               <TableHead>Password</TableHead>
               <TableHead>Date Created</TableHead>
@@ -103,7 +102,6 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
           <TableBody>
             {accounts.map((account) => (
               <TableRow key={account.id}>
-                <TableCell>{account.companyName}</TableCell>
                 <TableCell>{account.username}</TableCell>
                 <TableCell className="relative">
                   <span className="flex items-center gap-2">

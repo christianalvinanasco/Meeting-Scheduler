@@ -48,17 +48,6 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
     <Card className="p-6 bg-white shadow-lg rounded-lg border border-gray-100">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="companyName" className="text-brand-gray-dark">Company Name</Label>
-          <Input
-            id="companyName"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            required
-            placeholder="Enter company name"
-            className="mt-1 border-brand-gray-light focus:border-primary focus:ring-primary"
-          />
-        </div>
-        <div>
           <Label htmlFor="username" className="text-brand-gray-dark">Username</Label>
           <Input
             id="username"
