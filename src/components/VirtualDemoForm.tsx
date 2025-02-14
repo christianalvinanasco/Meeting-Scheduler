@@ -8,7 +8,9 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "./ui/scroll-area";
 
+
 const timeSlots = [
+  "8:30 - 10:00",
   "10:00 - 11:30",
   "13:00 - 14:30",
   "14:30 - 16:00",
@@ -23,9 +25,9 @@ const payrollOperationStatuses = [
 ];
 
 export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () => void; userRole?: string }) => {
-  // Only render the form for clients
+  
   if (userRole === "main_admin" || userRole === "second_admin") {
-    return null; // Return null to prevent rendering for admins
+    return null;
   }
 
   const navigate = useNavigate();
@@ -52,8 +54,9 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
       ...formData,
       id: Date.now(),
       dateSubmitted: new Date().toLocaleDateString(),
-      status: userRole === "main_admin" ? "approved" : "pending",
-      payrollStatus: formData.payrollStatus === "Others" ? formData.otherPayrollStatus : formData.payrollStatus
+      status: "Pending",
+      payrollStatus: formData.payrollStatus === "Others" ? formData.otherPayrollStatus : formData.payrollStatus,
+      assignedTo: formData.meetingTime === "8:30 - 10:00" ? "second_admin" : "main_admin"
     };
 
     localStorage.setItem("meetings", JSON.stringify([...existingMeetings, newMeeting]));
@@ -90,7 +93,7 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
               onChange={handleChange("companyName")}
               required
             />
-          </div>
+          </div><br></br>
           <Label>Client Current Status of Payroll Operations</Label>
             <Select 
               onValueChange={(value) => setFormData(prev => ({ ...prev, payrollStatus: value }))}
@@ -151,24 +154,27 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
               onChange={handleChange("meetingDate")}
               required
             />
-          </div>
+          </div><br></br>
 
           <div>
             <Label>Meeting Time</Label>
-            <Select onValueChange={(value) => setFormData(prev => ({ ...prev, meetingTime: value }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select time slot" />
-              </SelectTrigger>
-              <SelectContent>
-                {timeSlots.map((slot) => (
-                  <SelectItem key={slot} value={slot}>
-                    {slot}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
+            <div className="flex gap-4">
+  <div className="flex-1">
+    <Select onValueChange={(value) => setFormData(prev => ({ ...prev, meetingTime: value, timeOption: "1" }))}>
+      <SelectTrigger>
+        <SelectValue placeholder="Select your preferred time" />
+      </SelectTrigger>
+      <SelectContent>
+        {timeSlots.map((slot) => (
+          <SelectItem key={`opt1-${slot}`} value={slot}>
+            {slot}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+</div>
+              </div><br></br>
           <div>
             <Label htmlFor="clientEmails">Client Team Members' Email Addresses joining the meeting</Label>
             <Textarea
@@ -178,7 +184,7 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
               placeholder="Enter email addresses separated by commas"
               required
             />
-            <span>Example: 123@gmail.com, abc@gmail.com, xyz@gmail.com</span>
+            <span className="text-sm text-red-400">Example: 123@gmail.com, abc@gmail.com, xyz@gmail.com</span>
           </div>
 
           <div>
@@ -190,7 +196,7 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
               placeholder="Enter email addresses separated by commas"
               required
             />
-            <span>Example: 123@gmail.com, abc@gmail.com, xyz@gmail.com</span>
+            <span className="text-sm text-red-400">Example: 123@gmail.com, abc@gmail.com, xyz@gmail.com</span>
           </div>
         </div>
 

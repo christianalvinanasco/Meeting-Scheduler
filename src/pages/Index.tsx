@@ -25,7 +25,13 @@ const Index = () => {
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const [showAddClient, setShowAddClient] = useState(false);
   const [showClientAccounts, setShowClientAccounts] = useState(false);
-  const [clientAccounts, setClientAccounts] = useState<ClientAccount[]>([]);
+  const [clientAccounts, setClientAccounts] = useState<ClientAccount[]>([{
+    id: crypto.randomUUID(),
+    username: "abccorp@gmail.com",
+    password: "abccorp",
+    dateCreated: new Date().toLocaleDateString(),
+  }
+]);
   const { toast } = useToast();
 
   // Predefined admin credentials
@@ -45,7 +51,7 @@ const Index = () => {
       setIsLoggedIn(true);
       toast({
         title: "Welcome!",
-        description: `Logged in as ${clientAccount.companyName}`,
+        description: `Logged in successfully.`,
       });
       return;
     }
@@ -53,6 +59,7 @@ const Index = () => {
     // Match the credentials
     const isMainAdmin = username === mainAdminCredentials.username && password === mainAdminCredentials.password;
     const isOtherAdmin = username === otherAdminCredentials.username && password === otherAdminCredentials.password;
+    
 
     if (isMainAdmin) {
       setIsLoggedIn(true);
@@ -60,7 +67,7 @@ const Index = () => {
       toast({
         title: "Welcome back, MCash Division!",
         description: "Logged in successfully",
-        className: "bg-green-100 border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
+        className: "bg-green-100 font-poppins border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
         duration: 3000,
       });
     } else if (isOtherAdmin) {
@@ -69,14 +76,14 @@ const Index = () => {
       toast({
         title: "Welcome back, Sales Partnership and Business Development Division!",
         description: "Logged in successfully",
-        className: "bg-green-100 border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
+        className: "bg-green-100 font-poppins border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
         duration: 3000,
       });
     } else {
       toast({
         title: "Login Failed",
         description: "Invalid credentials.",
-        className: "bg-red-100 border-red-500 text-red-800",
+        className: "bg-red-100 font-poppins border-red-500 text-red-800",
       });
     }
   };
@@ -86,7 +93,6 @@ const Index = () => {
     setShowAddClient(false);
     toast({
       title: "Account Created",
-      description: `${newAccount.companyName}'s account has been created successfully.`,
     });
   };
 
@@ -119,12 +125,12 @@ const Index = () => {
           onClick: () => setShowVideoUpload(true),
         },
         {
-          title: "Add Client Account",
+          title: "Add RM Account",
           icon: UserPlus,
           onClick: () => setShowAddClient(true),
         },
         {
-          title: "View Client Accounts",
+          title: "View RM Accounts",
           icon: List,
           onClick: () => setShowClientAccounts(true),
         },
@@ -170,7 +176,7 @@ const Index = () => {
                 className="h-24 object-contain mb-8"
               />
               <div className="space-y-6 max-w-md">
-                <h2 className="text-xl font-semibold">Please enter your credentials</h2>
+                <h2 className="text-xl font-sans font-semibold">Please enter your credentials</h2>
                 <form onSubmit={handleLogin} className="space-y-4">
                   <Input
                     type="text"
@@ -206,8 +212,8 @@ const Index = () => {
           <Header userRole={userRole} />
           <div className="p-6 space-y-12 max-w-7xl mx-auto">
             <header className="text-center space-y-4">
-              <h1 className="text-6xl font-bold text-red-600">WELCOME!</h1>
-              <p className="text-2xl text-gray-600">
+              <h1 className="text-6xl font-sans font-bold text-red-600">WELCOME!</h1>
+              <p className="text-2xl font-sans text-gray-600">
                 How can I support you today?  
               </p>
             </header>
@@ -234,16 +240,16 @@ const Index = () => {
               <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
-                    <DialogTitle>Add New Client Account</DialogTitle>
+                    <DialogTitle>Add New RM Account</DialogTitle>
                   </DialogHeader>
                   <AddClientForm onAccountAdded={handleAddAccount} />
                 </DialogContent>
               </Dialog>
 
               <Dialog open={showClientAccounts} onOpenChange={setShowClientAccounts}>
-                <DialogContent className="max-w-4xl">
+                <DialogContent className="max-w-4xl text-center font-sans">
                   <DialogHeader>
-                    <DialogTitle>Client Accounts</DialogTitle>
+                    <DialogTitle>RM Accounts</DialogTitle>
                   </DialogHeader>
                   <ClientAccountsList accounts={clientAccounts} setAccounts={setClientAccounts} />
                 </DialogContent>
@@ -252,7 +258,7 @@ const Index = () => {
           )}
 
           <Dialog open={showDemoForm} onOpenChange={setShowDemoForm}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="w-[50vw] h-[95vh] max-w-none">
               <DialogHeader>
                 <DialogTitle>Schedule a Virtual Demo</DialogTitle>
               </DialogHeader>
@@ -264,17 +270,20 @@ const Index = () => {
           </Dialog>
 
           <Dialog open={showMeetings} onOpenChange={setShowMeetings}>
-            <DialogContent className="max-w-4xl">
+            <DialogContent className="w-[90vw] h-[100vh] max-w-none">
               <DialogHeader>
                 <DialogTitle>Meeting Schedules</DialogTitle>
-              </DialogHeader>
-              <MeetingSchedules userRole={"main_admin"}/>
-            </DialogContent>
+            </DialogHeader>
+              <div className="h-full overflow-auto">
+                <MeetingSchedules userRole={"main_admin"} />
+              </div>
+          </DialogContent>
           </Dialog>
 
-          {(userRole === "main_admin" || userRole === "second_admin") && (
+
+          {(userRole === "main_admin" || userRole === "second_admin" || userRole === "client") && (
             <Dialog open={showReferralStatus} onOpenChange={setShowReferralStatus}>
-              <DialogContent className="max-w-4xl">
+              <DialogContent className="w-[90vw] h-[100vh] max-w-4xl">
                 <DialogHeader>
                   <DialogTitle>Track Referral Status</DialogTitle>
                 </DialogHeader>

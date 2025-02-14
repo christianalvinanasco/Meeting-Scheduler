@@ -1,92 +1,130 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
+ 
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
-import { Menu, Bell, LogOut, FileText } from "lucide-react";
+import { Menu, Bell, LogOut } from "lucide-react";
+
+import { useToast } from "@/hooks/use-toast";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export const Header = ({ userRole }) => {
   const navigate = useNavigate();
   const [showTerms, setShowTerms] = useState(false);
 
+  const { toast } = useToast();
+
   const handleLogout = () => {
-    navigate("/"); // Navigate to the login section
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
+      duration: 2000,
+    });
+    
+    window.location.reload();
   };
 
+  // Mock notifications - in a real app, these would come from your backend
+  const notifications = [
+    {
+      id: 1,
+      title: "New Meeting Request",
+      message: "You have a new virtual demo meeting request.",
+      time: "5 minutes ago"
+    },
+    {
+      id: 2,
+      title: "Schedule Updated",
+      message: "Your meeting schedule has been updated.",
+      time: "1 hour ago"
+    }
+  ];
+
   return (
-    <>
-      <div className="flex justify-between items-center p-4 bg-white shadow-md">
-        <div className="flex items-center space-x-2">
-          <img 
-            src="/images/ml-logo.png" 
-            alt="ML Logo" 
-            className="h-10 w-auto"
-          />
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          
-          {/* Dropdown Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-brand-gray-dark hover:text-primary">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              {/* Conditionally render Notifications for Client only */}
-              {userRole === "client" && (
-                <DropdownMenuItem className="hover:bg-brand-gray-light hover:text-primary cursor-pointer">
-                  <Bell className="mr-2 h-4 w-4" />
-                  <span>Notifications</span>
-                </DropdownMenuItem>
-              )}
-
-              <DropdownMenuItem onClick={() => setShowTerms(true)} className="hover:bg-brand-gray-light hover:text-primary cursor-pointer">
-                <FileText className="mr-2 h-4 w-4" />
-                <span>Terms and Conditions</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="hover:bg-brand-gray-light hover:text-primary cursor-pointer">
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+    <div className="flex justify-between items-center p-4 bg-white shadow-md">
+      <div className="flex items-center space-x-2">
+        <img 
+          src="/images/ml-logo.png" 
+          alt="ML Logo" 
+          className="h-10 w-auto"
+        />
       </div>
-
-      <Dialog open={showTerms} onOpenChange={setShowTerms}>
-        <DialogContent className="bg-white">
-          <DialogHeader>
-            <DialogTitle className="text-primary font-bold">Terms and Conditions</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 text-brand-gray-dark">
-            <p>Welcome to ML Payroll PRO! By using our services, you agree to the following terms:</p>
-            
-            <h3 className="font-semibold text-primary">1. Service Usage</h3>
-            <p>Our payroll system is designed to help businesses manage their payroll efficiently and securely.</p>
-            
-            <h3 className="font-semibold text-primary">2. Data Privacy</h3>
-            <p>We are committed to protecting your data and maintaining confidentiality in accordance with data privacy laws.</p>
-            
-            <h3 className="font-semibold text-primary">3. User Responsibilities</h3>
-            <p>Users must maintain accurate records and ensure timely submissions for payroll processing.</p>
-            
-            <h3 className="font-semibold text-primary">4. Support</h3>
-            <p>Our support team is available during business hours to assist with any questions or concerns.</p>
+      
+      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4">
+          {/* Conditionally render "Admin", "Client" or "SPBDD" based on userRole */}
+          {userRole === "main_admin" && (
+            <span className="text-red-500 font-sans font-extrabold">Admin</span>
+          )}
+          {userRole === "second_admin" && (
+            <span className="text-red-500 font-sans font-extrabold">SPBDD</span>
+          )}
+           {userRole === "client" && (
+            <span className="text-red-500 font-sans font-extrabold">RM</span>
+          )}
+        
           </div>
-        </DialogContent>
-      </Dialog>
-    </>
+        <Popover>
+         <PopoverTrigger asChild>
+  <div className="relative group">
+    <Button variant="ghost" size="icon" className="relative">
+      <Bell className="h-5 w-5" />
+      {notifications.length > 0 && (
+        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          {notifications.length}
+        </span>
+      )}
+    </Button>
+    {/* Logout text on hover */}
+    <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-red-600 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      Notifications
+    </span>
+  </div>
+</PopoverTrigger>
+          <PopoverContent className="w-80 p-0">
+            <div className="p-4 border-b border-gray-200">
+              <h4 className="font-semibold">Notifications</h4>
+            </div>
+            <div className="max-h-96 overflow-auto">
+              {notifications.map((notification) => (
+                <div 
+                  key={notification.id} 
+                  className="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                >
+                  <div className="font-medium text-sm">{notification.title}</div>
+                  <div className="text-sm text-gray-600">{notification.message}</div>
+                  <div className="text-xs text-gray-400 mt-1">{notification.time}</div>
+                </div>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        <div className="relative group">
+  <Button
+    variant="ghost"
+    size="icon"
+    onClick={handleLogout}
+    className="text-gray-600 hover:text-primary"
+  >
+    <LogOut className="h-5 w-5" />
+  </Button>
+  {/* Logout text on hover */}
+  <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-red-600 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+    Logout
+  </span>
+</div>
+      </div>
+    </div>
   );
 };

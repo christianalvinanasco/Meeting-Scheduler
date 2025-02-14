@@ -18,6 +18,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        poppins: ["Poppins, sans-serif"], // Add Poppins font
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

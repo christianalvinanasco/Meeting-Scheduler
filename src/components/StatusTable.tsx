@@ -90,7 +90,7 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
             <TableHead>Company Name</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Date Onboarded</TableHead>
-            <TableHead>Date Started</TableHead>
+            
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -168,7 +168,7 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
                 )}
               </TableCell>
               <TableCell>{company.dateOnboarded}</TableCell>
-              <TableCell>{company.dateStarted}</TableCell>
+              
             </TableRow>
           ))}
         </TableBody>

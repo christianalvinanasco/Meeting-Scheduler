@@ -14,7 +14,6 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
   const { toast } = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [companyName, setCompanyName] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +22,6 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
       id: crypto.randomUUID(),
       username,
       password,
-      companyName,
       dateCreated: new Date().toLocaleDateString(),
     };
 
@@ -31,7 +29,7 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
 
     toast({
       title: "Success!",
-      description: `Account created for ${companyName}`,
+      description: `Account created.`,
       style: {
         backgroundColor: "green", // Light green background
         color: "white", // Dark green text
@@ -41,7 +39,6 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
     
     setUsername("");
     setPassword("");
-    setCompanyName("");
   };
 
   return (

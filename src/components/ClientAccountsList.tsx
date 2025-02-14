@@ -33,7 +33,6 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
   const handleEdit = (account: ClientAccount) => {
     setSelectedAccount(account);
     setEditUsername(account.username);
-    setEditCompanyName(account.companyName);
     setEditPassword(account.password);
     setShowEditDialog(true);
   };
@@ -42,7 +41,6 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
     setAccounts(accounts.filter((a) => a.id !== account.id));
     toast({
       title: "Account Deleted",
-      description: `${account.companyName}'s account has been deleted.`,
       style: {
         backgroundColor: "red",
         color: "white",
@@ -88,7 +86,7 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Client Accounts</h3>
+      <h3 className="text-lg font-semibold">RM Accounts</h3>
       <ScrollArea className="h-[60vh] pr-4"> {/* Add ScrollArea with height */}
         <Table>
           <TableHeader>
@@ -148,16 +146,9 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Client Account</DialogTitle>
+            <DialogTitle>Edit Account</DialogTitle>
           </DialogHeader>
-          <div>
-              <Label htmlFor="editCompanyName">Company Name</Label>
-              <Input
-                id="editCompanyName"
-                value={editCompanyName}
-                onChange={(e) => setEditCompanyName(e.target.value)}
-              />
-            </div>
+         
           <div className="space-y-4">
             <div>
               <Label htmlFor="editUsername">Username</Label>

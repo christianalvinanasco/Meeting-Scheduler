@@ -32,20 +32,20 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded transition-colors;
+    @apply bg-primary font-sans hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded transition-colors;
   }
   
   .btn-secondary {
-    @apply bg-brand-gray-light hover:bg-brand-gray-medium text-brand-gray-dark font-semibold py-2 px-4 rounded transition-colors;
+    @apply bg-brand-gray-light font-sans hover:bg-brand-gray-medium text-brand-gray-dark font-semibold py-2 px-4 rounded transition-colors;
   }
 
   .card-gradient {
-    @apply bg-gradient-red shadow-lg hover:shadow-xl transition-shadow;
+    @apply bg-gradient-red font-poppins shadow-lg hover:shadow-xl transition-shadow;
   }
 }

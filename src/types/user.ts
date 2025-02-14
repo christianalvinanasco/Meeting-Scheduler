@@ -13,8 +13,9 @@ export interface Meeting {
   meetingTime: string;
   clientEmails: string;
   teamEmails: string;
-  status: "Pending" | "Confirm" | "Endorse" | "Reschedule";
+  status: "Pending" | "Confirmed" | "Endorsed" | "Rescheduled";
   dateSubmitted: string;
+  assignedTo?: string;
 }
 
 export interface User {
@@ -25,7 +26,6 @@ export interface User {
 export interface ClientAccount {
   id: string;
   username: string;
-  companyName: string;
   dateCreated: string;
   password: string;
 }
