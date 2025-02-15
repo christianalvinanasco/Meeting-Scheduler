@@ -29,6 +29,10 @@ export const Header = ({ userRole }) => {
       title: "Logged out",
       description: "You have been successfully logged out",
       duration: 2000,
+      style: {
+        backgroundColor: "red",
+        color: "white",
+      },
     });
     
     window.location.reload();

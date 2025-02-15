@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog";
 import { Input } from "./ui/input";
@@ -18,15 +18,14 @@ import { ScrollArea } from "./ui/scroll-area"; // Import ScrollArea
 
 interface ClientAccountsListProps {
   accounts: ClientAccount[];
-  setAccounts: (accounts: ClientAccount[]) => void;
+  setAccounts: React.Dispatch<React.SetStateAction<ClientAccount[]>>;
 }
 
-export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsListProps) => {
+export const ClientAccountsList: React.FC<ClientAccountsListProps> = ({ accounts, setAccounts }) => {
   const { toast } = useToast();
   const [selectedAccount, setSelectedAccount] = useState<ClientAccount | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editUsername, setEditUsername] = useState("");
-  const [editCompanyName, setEditCompanyName] = useState("");
   const [editPassword, setEditPassword] = useState("");
   const [showPasswords, setShowPasswords] = useState<{ [key: string]: boolean }>({});
 
@@ -37,14 +36,16 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
     setShowEditDialog(true);
   };
 
-  const handleDelete = (account: ClientAccount) => {
-    setAccounts(accounts.filter((a) => a.id !== account.id));
+  const handleDeleteAccount = (id: string) => {
+    const updatedAccounts = accounts.filter((account) => account.id !== id);
+    setAccounts(updatedAccounts);
+    localStorage.setItem("clientAccounts", JSON.stringify(updatedAccounts));
     toast({
       title: "Account Deleted",
+      description: "The account has been successfully deleted.",
       style: {
         backgroundColor: "red",
         color: "white",
-        border: "black",
       },
     });
   };
@@ -52,22 +53,21 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
   const handleSaveEdit = () => {
     if (!selectedAccount) return;
 
-    setAccounts(
-      accounts.map((account) =>
-        account.id === selectedAccount.id
-          ? {
-              ...account,
-              username: editUsername,
-              companyName: editCompanyName,
-              password: editPassword,
-            }
-          : account
-      )
+    const updatedAccounts = accounts.map((account) =>
+      account.id === selectedAccount.id
+        ? {
+            ...account,
+            username: editUsername,
+            password: editPassword,
+          }
+        : account
     );
+
+    setAccounts(updatedAccounts);
+    localStorage.setItem("clientAccounts", JSON.stringify(updatedAccounts));
 
     toast({
       title: "Account Updated",
-      description: `${editCompanyName}'s account has been updated.`,
       style: {
         backgroundColor: "green",
         color: "white",
@@ -131,7 +131,7 @@ export const ClientAccountsList = ({ accounts, setAccounts }: ClientAccountsList
                     <Button
                       variant="destructive"
                       size="icon"
-                      onClick={() => handleDelete(account)}
+                      onClick={() => handleDeleteAccount(account.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

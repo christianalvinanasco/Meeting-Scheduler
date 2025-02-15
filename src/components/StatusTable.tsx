@@ -15,10 +15,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Trash } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CompanyData {
   companyName: string;
@@ -49,11 +51,39 @@ interface StatusTableProps {
 }
 
 export const StatusTable = ({ userRole }: StatusTableProps) => {
-  const [companyData, setCompanyData] = useState(initialCompanyData);
+  const [companyData, setCompanyData] = useState<CompanyData[]>(() => {
+    const storedData = localStorage.getItem("statusTableData");
+    return storedData ? JSON.parse(storedData) : initialCompanyData;
+  });
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [customStatus, setCustomStatus] = useState("");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [companyToDelete, setCompanyToDelete] = useState<number | null>(null);
+
+  const filteredCompanyData = companyData.filter(company => {
+    const isStatusMatch = statusFilter === "all" ||
+      (statusFilter === "other" && !statusOptions.includes(company.status.toLowerCase())) ||
+      company.status.toLowerCase() === statusFilter.toLowerCase();
+    return company.companyName.toLowerCase().includes(searchQuery.toLowerCase()) && isStatusMatch;
+  });
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedData = localStorage.getItem("statusTableData");
+      if (storedData) {
+        setCompanyData(JSON.parse(storedData));
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   const handleStatusChange = (index: number, newStatus: string) => {
     const updatedData = [...companyData];
@@ -82,19 +112,69 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
     }
   };
 
+  const handleDeleteCompany = (index: number) => {
+    setCompanyToDelete(index);
+    setIsConfirmDialogOpen(true);
+  };
+
+  const confirmDeleteCompany = () => {
+    if (companyToDelete !== null) {
+      const updatedData = companyData.filter((_, i) => i !== companyToDelete);
+      setCompanyData(updatedData);
+      localStorage.setItem("statusTableData", JSON.stringify(updatedData));
+      toast({
+        title: "Company Deleted",
+        description: "The company has been successfully deleted.",
+        style: {
+          backgroundColor: "red",
+          color: "white",
+        },
+      });
+    }
+    setIsConfirmDialogOpen(false);
+    setCompanyToDelete(null);
+  };
+
   return (
     <ScrollArea className="h-[60vh] pr-4">
+      <div className="flex items-center gap-4 mb-4">
+        <Input
+          placeholder="Search Company Name"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="h-8"
+        />
+        <div>
+          <Select
+            value={statusFilter}
+            onValueChange={setStatusFilter}
+          >
+            <SelectTrigger className="h-8">
+              <SelectValue placeholder="Filter by Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              {statusOptions.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </SelectItem>
+              ))}
+              <SelectItem value="other">Other</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Company Name</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Date Onboarded</TableHead>
-            
+            {userRole === "main_admin" && <TableHead />}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {companyData.map((company, index) => (
+          {filteredCompanyData.map((company, index) => (
             <TableRow key={index}>
               <TableCell>{company.companyName}</TableCell>
               <TableCell>
@@ -168,7 +248,17 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
                 )}
               </TableCell>
               <TableCell>{company.dateOnboarded}</TableCell>
-              
+              {userRole === "main_admin" && (
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteCompany(index)}
+                  >
+                    <Trash className="h-4 w-4 text-red-500" />
+                  </Button>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
@@ -190,6 +280,22 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
               placeholder="Enter custom status..."
             />
             <Button onClick={handleCustomStatusSubmit}>Submit</Button>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Dialog for confirmation of company deletion */}
+      {userRole === "main_admin" && (
+        <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogDescription>Are you sure you want to delete this company?</DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-2">
+              <Button onClick={confirmDeleteCompany} className="bg-red-500 text-white">Confirm</Button>
+              <Button onClick={() => setIsConfirmDialogOpen(false)}>Cancel</Button>
+            </div>
           </DialogContent>
         </Dialog>
       )}

@@ -14,7 +14,7 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const { toast } = useToast();
   const [filteredMeetings, setFilteredMeetings] = useState<Meeting[]>([]);
-  const [statusFilter, setStatusFilter] = useState<Meeting["status"] | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<Meeting["status"] | "all" | "Pending">("all");
   const [monthFilter, setMonthFilter] = useState<string>("all");
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -159,7 +159,7 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
   // Define available status options based on the user role
   const statusOptions = userRole === "main_admin"
     ? ["Confirmed", "Endorsed"]
-    : ["Confirmed", "Reschedule"];
+    : ["Confirmed", "Rescheduled"];
 
   return (
     <Card className="p-6">
@@ -168,13 +168,14 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
         <div className="flex-1">
           <Select
             value={statusFilter}
-            onValueChange={(value) => setStatusFilter(value as Meeting["status"] | "all")}
+            onValueChange={(value) => setStatusFilter(value as Meeting["status"] | "all" | "Pending")}
           >
             <SelectTrigger>
               <SelectValue placeholder="Filter by Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="Pending">Pending</SelectItem>
               {statusOptions.map((status) => (
                 <SelectItem key={status} value={status}>
                   {status}
@@ -258,6 +259,7 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
                       e.stopPropagation();
                       handleForwardMeeting(meeting);
                     }}
+                    disabled={meeting.status !== "Confirmed"}
                   >
                     <Forward className="h-4 w-4 text-blue-500" />
                   </Button>

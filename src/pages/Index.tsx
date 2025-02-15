@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { VirtualDemoForm } from "@/components/VirtualDemoForm";
 import { MeetingSchedules } from "@/components/MeetingSchedules";
-import { VideoUploadForm } from "@/components/VideoUploadForm";
 import { ReferralStatus } from "@/components/ReferralStatus";
 import { Header } from "@/components/Header";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -22,10 +21,10 @@ const Index = () => {
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [showMeetings, setShowMeetings] = useState(false);
   const [showReferralStatus, setShowReferralStatus] = useState(false);
-  const [showVideoUpload, setShowVideoUpload] = useState(false);
+  const [showVideoWalkthrough, setShowVideoWalkthrough] = useState(false);
   const [showAddClient, setShowAddClient] = useState(false);
   const [showClientAccounts, setShowClientAccounts] = useState(false);
-  const [clientAccounts, setClientAccounts] = useState<ClientAccount[]>([{
+  const [clientAccounts, setClientAccounts] = useState<ClientAccount[]>(JSON.parse(localStorage.getItem("clientAccounts")) || [{
     id: crypto.randomUUID(),
     username: "abccorp@gmail.com",
     password: "abccorp",
@@ -50,8 +49,10 @@ const Index = () => {
       setUserRole("client");
       setIsLoggedIn(true);
       toast({
-        title: "Welcome!",
+        title: "Welcome, RM!",
         description: `Logged in successfully.`,
+        className: "bg-green-100 font-poppins border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
+        duration: 1500,
       });
       return;
     }
@@ -65,19 +66,19 @@ const Index = () => {
       setIsLoggedIn(true);
       setUserRole("main_admin");
       toast({
-        title: "Welcome back, MCash Division!",
+        title: "Welcome, MCash Division!",
         description: "Logged in successfully",
         className: "bg-green-100 font-poppins border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
-        duration: 3000,
+        duration: 1500,
       });
     } else if (isOtherAdmin) {
       setIsLoggedIn(true);
       setUserRole("second_admin");
       toast({
-        title: "Welcome back, Sales Partnership and Business Development Division!",
+        title: "Welcome, Sales Partnership and Business Development Division!",
         description: "Logged in successfully",
         className: "bg-green-100 font-poppins border-green-500 text-green-800 w-[400px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg rounded-lg",
-        duration: 3000,
+        duration: 1500,
       });
     } else {
       toast({
@@ -88,11 +89,17 @@ const Index = () => {
     }
   };
 
-  const handleAddAccount = (newAccount: ClientAccount) => {
-    setClientAccounts(prev => [...prev, newAccount]);
-    setShowAddClient(false);
+  const handleAddClientAccount = (account: ClientAccount) => {
+    const updatedAccounts = [...clientAccounts, account];
+    setClientAccounts(updatedAccounts);
+    localStorage.setItem("clientAccounts", JSON.stringify(updatedAccounts));
     toast({
-      title: "Account Created",
+      title: "Client Account Added",
+      description: `Account for ${account.username} has been added successfully.`,
+      style: {
+        backgroundColor: "green",
+        color: "white",
+      },
     });
   };
 
@@ -122,7 +129,7 @@ const Index = () => {
         {
           title: "ML Payroll PRO Virtual Walkthrough",
           icon: Play,
-          onClick: () => setShowVideoUpload(true),
+          onClick: () => setShowVideoWalkthrough(true),
         },
         {
           title: "Add RM Account",
@@ -148,7 +155,7 @@ const Index = () => {
         {
           title: "ML Payroll PRO Virtual Walkthrough",
           icon: Play,
-          onClick: () => setShowVideoUpload(true),
+          onClick: () => setShowVideoWalkthrough(true),
         },
       ];
     }
@@ -159,7 +166,7 @@ const Index = () => {
       {
         title: "ML Payroll PRO Virtual Walkthrough",
         icon: Play,
-        onClick: () => setShowVideoUpload(true),
+        onClick: () => setShowVideoWalkthrough(true),
       },
     ];
   };
@@ -242,7 +249,7 @@ const Index = () => {
                   <DialogHeader>
                     <DialogTitle>Add New RM Account</DialogTitle>
                   </DialogHeader>
-                  <AddClientForm onAccountAdded={handleAddAccount} />
+                  <AddClientForm onAccountAdded={handleAddClientAccount} />
                 </DialogContent>
               </Dialog>
 
@@ -285,21 +292,32 @@ const Index = () => {
             <Dialog open={showReferralStatus} onOpenChange={setShowReferralStatus}>
               <DialogContent className="w-[90vw] h-[100vh] max-w-4xl">
                 <DialogHeader>
-                  <DialogTitle>Track Referral Status</DialogTitle>
+                  <DialogTitle className="text-center text-3xl">Track Referral Status</DialogTitle>
                 </DialogHeader>
                 <ReferralStatus />
               </DialogContent>
             </Dialog>
           )}
 
-          <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>ML Payroll PRO Virtual Walkthrough</DialogTitle>
-              </DialogHeader>
-              <VideoUploadForm userRole={userRole} />
-            </DialogContent>
-          </Dialog>
+          {(userRole === "main_admin" || userRole === "second_admin" || userRole === "client") && (
+            <Dialog open={showVideoWalkthrough} onOpenChange={setShowVideoWalkthrough}>
+              <DialogContent className="w-[80vw] h-[80vh] max-w-5xl">
+                <DialogHeader>
+                  <DialogTitle>ML Payroll PRO Virtual Walkthrough</DialogTitle>
+                </DialogHeader>
+                <div className="w-full h-full">
+                  <iframe
+                    src="https://www.youtube.com/embed/WrkK6uVUpm4"
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  ></iframe>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       )}
     </div>
