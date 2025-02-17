@@ -9,6 +9,15 @@ import { format, parse } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Trash, Forward } from "lucide-react";
 import { MeetingDetailsModal } from "./meetingDetails";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog"; // Assuming you have a Dialog component
 
 export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "second_admin" }) => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
@@ -18,6 +27,10 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
   const [monthFilter, setMonthFilter] = useState<string>("all");
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isForwardDialogOpen, setIsForwardDialogOpen] = useState(false);
+  const [meetingToDelete, setMeetingToDelete] = useState<number | null>(null);
+  const [meetingToForward, setMeetingToForward] = useState<Meeting | null>(null);
 
   useEffect(() => {
     const storedMeetings = JSON.parse(localStorage.getItem("meetings") || "[]");
@@ -25,7 +38,7 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
       ...meeting,
       status: meeting.status || "Pending",
       payrollStatus: meeting.payrollStatus || "Not Set",
-      assignedTo: meeting.assignedTo || "main_admin" // Default to main_admin if not set
+      assignedTo: meeting.assignedTo || "main_admin", // Default to main_admin if not set
     }));
     setMeetings(typedMeetings);
     setFilteredMeetings(typedMeetings);
@@ -117,6 +130,8 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
         color: "white",
       },
     });
+    setIsDeleteDialogOpen(false);
+    setMeetingToDelete(null); // Reset the meeting to delete
   };
 
   const handleForwardMeeting = (meeting: Meeting) => {
@@ -149,6 +164,8 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
         color: "white",
       },
     });
+    setIsForwardDialogOpen(false);
+    setMeetingToForward(null); // Reset the meeting to forward
   };
 
   const months = [
@@ -163,7 +180,7 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
 
   return (
     <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Meeting Schedules</h2>
+      <h2 className="flex flex-row justify-between text-2xl font-bold mb-6">Meeting Schedules</h2>
       <div className="flex gap-4 mb-6">
         <div className="flex-1">
           <Select
@@ -242,27 +259,84 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
                 </TableCell>
                 <TableCell>{meeting.dateSubmitted}</TableCell>
                 <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteMeeting(meeting.id);
-                    }}
-                  >
-                    <Trash className="h-4 w-4 text-red-500" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleForwardMeeting(meeting);
-                    }}
-                    disabled={meeting.status !== "Confirmed"}
-                  >
-                    <Forward className="h-4 w-4 text-blue-500" />
-                  </Button>
+                  {/* Delete Button with Confirmation Dialog */}
+                  <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMeetingToDelete(meeting.id);
+                        }}
+                      >
+                        <Trash className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Are you sure?</DialogTitle>
+                        <DialogDescription>
+                          This action cannot be undone. This will permanently delete the meeting.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => {
+                            if (meetingToDelete) {
+                              handleDeleteMeeting(meetingToDelete);
+                            }
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+
+                  {/* Forward Button with Confirmation Dialog */}
+                  <Dialog open={isForwardDialogOpen} onOpenChange={setIsForwardDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMeetingToForward(meeting);
+                        }}
+                        disabled={meeting.status !== "Confirmed"}
+                      >
+                        <Forward className="h-4 w-4 text-blue-500" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Forward Meeting</DialogTitle>
+                        <DialogDescription>
+                          Are you sure you want to forward this meeting to the track referral status?
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsForwardDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="default"
+                          onClick={() => {
+                            if (meetingToForward) {
+                              handleForwardMeeting(meetingToForward);
+                            }
+                          }}
+                        >
+                          Forward
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </TableCell>
               </TableRow>
             ))}

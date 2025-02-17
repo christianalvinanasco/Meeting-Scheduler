@@ -86,7 +86,7 @@ export const ClientAccountsList: React.FC<ClientAccountsListProps> = ({ accounts
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">RM Accounts</h3>
+      <h3 className="text-lg font-bold">RM Accounts</h3>
       <ScrollArea className="h-[60vh] pr-4"> {/* Add ScrollArea with height */}
         <Table>
           <TableHeader>

@@ -253,21 +253,20 @@ const Index = () => {
                 </DialogContent>
               </Dialog>
 
+            {/* RM ACCOUNTS */}
               <Dialog open={showClientAccounts} onOpenChange={setShowClientAccounts}>
                 <DialogContent className="max-w-4xl text-center font-sans">
-                  <DialogHeader>
-                    <DialogTitle>RM Accounts</DialogTitle>
-                  </DialogHeader>
                   <ClientAccountsList accounts={clientAccounts} setAccounts={setClientAccounts} />
                 </DialogContent>
               </Dialog>
             </>
           )}
 
+          {/* SCHEDULE A VIRTUAL DEMO FORM*/}
           <Dialog open={showDemoForm} onOpenChange={setShowDemoForm}>
-            <DialogContent className="w-[50vw] h-[95vh] max-w-none">
+            <DialogContent className="[50vw] h-[95vh]">
               <DialogHeader>
-                <DialogTitle>Schedule a Virtual Demo</DialogTitle>
+              <h2 className="flex flex-row justify-between text-center text-2xl font-bold mb-6">Schedule a Virtual Demo</h2>
               </DialogHeader>
               <VirtualDemoForm onClose={() => {
                 setShowDemoForm(false);
@@ -276,11 +275,9 @@ const Index = () => {
             </DialogContent>
           </Dialog>
 
+          {/* MEETING SCHEDULES*/}
           <Dialog open={showMeetings} onOpenChange={setShowMeetings}>
             <DialogContent className="w-[90vw] h-[100vh] max-w-none">
-              <DialogHeader>
-                <DialogTitle>Meeting Schedules</DialogTitle>
-            </DialogHeader>
               <div className="h-full overflow-auto">
                 <MeetingSchedules userRole={"main_admin"} />
               </div>
