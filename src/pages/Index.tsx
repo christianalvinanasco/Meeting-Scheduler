@@ -296,25 +296,26 @@ const Index = () => {
             </Dialog>
           )}
 
-          {(userRole === "main_admin" || userRole === "second_admin" || userRole === "client") && (
-            <Dialog open={showVideoWalkthrough} onOpenChange={setShowVideoWalkthrough}>
-              <DialogContent className="w-[80vw] h-[80vh] max-w-5xl">
-                <DialogHeader>
-                  <DialogTitle>ML Payroll PRO Virtual Walkthrough</DialogTitle>
-                </DialogHeader>
-                <div className="w-full h-full">
-                  <iframe
-                    src="https://www.youtube.com/embed/WrkK6uVUpm4"
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                  ></iframe>
-                </div>
-              </DialogContent>
-            </Dialog>
-          )}
+         {(userRole === "main_admin" || userRole === "second_admin" || userRole === "client") && (
+  <Dialog open={showVideoWalkthrough} onOpenChange={setShowVideoWalkthrough}>
+    <DialogContent className="w-full max-w-5xl p-4 sm:w-[90vw] sm:h-[80vh] md:w-[80vw] md:h-[80vh] lg:w-[70vw] lg:h-[75vh]">
+      <DialogHeader>
+        <DialogTitle>ML Payroll PRO Virtual Walkthrough</DialogTitle>
+      </DialogHeader>
+      <div className="w-full aspect-video">
+        <iframe
+          src="https://www.youtube.com/embed/WrkK6uVUpm4"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full rounded-lg"
+        ></iframe>
+      </div>
+    </DialogContent>
+  </Dialog>
+)}
+
         </div>
       )}
     </div>
