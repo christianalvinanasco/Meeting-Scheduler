@@ -241,7 +241,7 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Dialogs */}
+          {/* add account */}
           {userRole === "main_admin" && (
             <>
               <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
@@ -255,7 +255,7 @@ const Index = () => {
 
             {/* RM ACCOUNTS */}
               <Dialog open={showClientAccounts} onOpenChange={setShowClientAccounts}>
-                <DialogContent className="max-w-4xl text-center font-sans">
+                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto text-center font-sans">
                   <ClientAccountsList accounts={clientAccounts} setAccounts={setClientAccounts} />
                 </DialogContent>
               </Dialog>
@@ -277,24 +277,28 @@ const Index = () => {
 
           {/* MEETING SCHEDULES*/}
           <Dialog open={showMeetings} onOpenChange={setShowMeetings}>
-            <DialogContent className="w-[90vw] h-[100vh] max-w-none">
-              <div className="h-full overflow-auto">
-                <MeetingSchedules userRole={"main_admin"} />
-              </div>
-          </DialogContent>
-          </Dialog>
+  <DialogContent className="w-full max-w-[95vw] sm:max-w-lg md:max-w-2xl lg:max-w-4xl h-auto max-h-screen p-4">
+    <div className="h-full max-h-[80vh] overflow-y-auto">
+      <MeetingSchedules userRole={"main_admin"} />
+    </div>
+  </DialogContent>
+</Dialog>
+
 
 
           {(userRole === "main_admin" || userRole === "second_admin" || userRole === "client") && (
-            <Dialog open={showReferralStatus} onOpenChange={setShowReferralStatus}>
-              <DialogContent className="w-[90vw] h-[100vh] max-w-4xl">
-                <DialogHeader>
-                  <DialogTitle className="text-center text-3xl">Track Referral Status</DialogTitle>
-                </DialogHeader>
-                <ReferralStatus />
-              </DialogContent>
-            </Dialog>
-          )}
+  <Dialog open={showReferralStatus} onOpenChange={setShowReferralStatus}>
+    <DialogContent className="w-full max-w-[95vw] sm:max-w-xl md:max-w-2xl lg:max-w-4xl h-auto max-h-screen p-4">
+      <DialogHeader>
+        <DialogTitle className="text-center text-2xl sm:text-3xl">
+          Track Referral Status
+        </DialogTitle>
+      </DialogHeader>
+      <ReferralStatus />
+    </DialogContent>
+  </Dialog>
+)}
+
 
          {(userRole === "main_admin" || userRole === "second_admin" || userRole === "client") && (
   <Dialog open={showVideoWalkthrough} onOpenChange={setShowVideoWalkthrough}>
