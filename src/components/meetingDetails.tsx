@@ -26,6 +26,10 @@ export const MeetingDetailsModal = ({ isOpen, onClose, meeting }: MeetingDetails
             <p className="text-black-500 text-justify font-sans">{meeting.payrollStatus}</p>
           </div>
           <div className="bg-gray-200 p-2 rounded-lg">
+            <label className="font-bold">Maximum number of employees:</label>
+            <p className="text-black-500 text-justify font-sans">{meeting.employeeNumber}</p>
+          </div>
+          <div className="bg-gray-200 p-2 rounded-lg">
             <label className="font-bold">Contact Person:</label>
             <p className="text-black-500 font-sans">{meeting.contactPerson}</p>
           </div>

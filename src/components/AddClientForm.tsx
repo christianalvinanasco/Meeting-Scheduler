@@ -19,7 +19,7 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
     e.preventDefault();
     
     const newAccount: ClientAccount = {
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID(),      
       username,
       password,
       dateCreated: new Date().toLocaleDateString(),
@@ -36,14 +36,14 @@ export const AddClientForm = ({ onAccountAdded }: AddClientFormProps) => {
         border: "red", // Green border
       },
     });
-    
+        
     setUsername("");
     setPassword("");
   };
 
   return (
     <Card className="p-6 bg-white shadow-lg rounded-lg border border-gray-100">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">     
         <div>
           <Label htmlFor="username" className="text-brand-gray-dark">Username</Label>
           <Input

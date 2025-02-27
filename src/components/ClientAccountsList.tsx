@@ -30,7 +30,7 @@ export const ClientAccountsList: React.FC<ClientAccountsListProps> = ({ accounts
   const [showPasswords, setShowPasswords] = useState<{ [key: string]: boolean }>({});
 
   const handleEdit = (account: ClientAccount) => {
-    setSelectedAccount(account);
+    setSelectedAccount(account);    
     setEditUsername(account.username);
     setEditPassword(account.password);
     setShowEditDialog(true);
@@ -56,7 +56,7 @@ export const ClientAccountsList: React.FC<ClientAccountsListProps> = ({ accounts
     const updatedAccounts = accounts.map((account) =>
       account.id === selectedAccount.id
         ? {
-            ...account,
+            ...account,            
             username: editUsername,
             password: editPassword,
           }
@@ -90,7 +90,7 @@ export const ClientAccountsList: React.FC<ClientAccountsListProps> = ({ accounts
       <ScrollArea className="h-[60vh] pr-4"> {/* Add ScrollArea with height */}
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow>            
               <TableHead>Username</TableHead>
               <TableHead>Password</TableHead>
               <TableHead>Date Created</TableHead>
@@ -99,7 +99,7 @@ export const ClientAccountsList: React.FC<ClientAccountsListProps> = ({ accounts
           </TableHeader>
           <TableBody>
             {accounts.map((account) => (
-              <TableRow key={account.id}>
+              <TableRow key={account.id}>                
                 <TableCell>{account.username}</TableCell>
                 <TableCell className="relative">
                   <span className="flex items-center gap-2">
@@ -149,7 +149,7 @@ export const ClientAccountsList: React.FC<ClientAccountsListProps> = ({ accounts
             <DialogTitle>Edit Account</DialogTitle>
           </DialogHeader>
          
-          <div className="space-y-4">
+          <div className="space-y-4">          
             <div>
               <Label htmlFor="editUsername">Username</Label>
               <Input

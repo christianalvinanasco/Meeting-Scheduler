@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AddClientForm } from "@/components/AddClientForm";
 import { ClientAccountsList } from "@/components/ClientAccountsList";
 import { UserRole, ClientAccount } from "@/types/user";
-import { Video, Calendar, Users, Play, UserPlus, List } from "lucide-react";
+import { Video, Calendar, LocateIcon, Users, Play, UserPlus, List } from "lucide-react";
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -35,6 +35,7 @@ const Index = () => {
 
   // Predefined admin credentials
   const mainAdminCredentials = { username: "mcashdivision@mlhuillier.com", password: "mcashdivision" };
+  const vpAdminCredentials = { username: "vpadmin@mlhuillier.com", password: "vpadmin" };
   const otherAdminCredentials = { username: "spbddivision@mlhuillier.com", password: "spbdd" };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -59,6 +60,7 @@ const Index = () => {
 
     // Match the credentials
     const isMainAdmin = username === mainAdminCredentials.username && password === mainAdminCredentials.password;
+
     const isOtherAdmin = username === otherAdminCredentials.username && password === otherAdminCredentials.password;
     
 
@@ -106,21 +108,22 @@ const Index = () => {
   // Define available features based on user role
   const getDashboardCards = () => {
     const baseCards = [
-      {
-        title: "Schedule a Virtual Demo",
-        icon: Video,
-        onClick: () => setShowDemoForm(true),
-      },
-      {
-        title: "Check Meeting Schedules",
-        icon: Calendar,
-        onClick: () => setShowMeetings(true),
-      },
+         //insert default
     ];
-
+    //main admin
     if (userRole === "main_admin") {
       return [
         ...baseCards,
+        {
+          title: "Schedule a Virtual Demo",
+          icon: Video,
+          onClick: () => setShowDemoForm(true),
+        },
+        {
+          title: "Check Meeting Schedules",
+          icon: Calendar,
+          onClick: () => setShowMeetings(true),
+        },
         {
           title: "Track Referral Status",
           icon: Users,
@@ -130,7 +133,7 @@ const Index = () => {
           title: "ML Payroll PRO Virtual Walkthrough",
           icon: Play,
           onClick: () => setShowVideoWalkthrough(true),
-        },
+        },       
         {
           title: "Add RM Account",
           icon: UserPlus,
@@ -144,9 +147,32 @@ const Index = () => {
       ];
     }
 
+
+    //VP ADMIN 
+    if (userRole === "vp_admin") {
+      return [
+        ...baseCards,
+        {
+          title: "Track Referral Status",
+          icon: Users,
+          onClick: () => setShowReferralStatus(true),
+        },       
+      ];
+    }
+    //second admin
     if (userRole === "second_admin") {
       return [
         ...baseCards,
+        {
+          title: "Schedule a Virtual Demo",
+          icon: Video,
+          onClick: () => setShowDemoForm(true),
+        },
+        {
+          title: "Check Meeting Schedules",
+          icon: Calendar,
+          onClick: () => setShowMeetings(true),
+        },
         {
           title: "Track Referral Status",
           icon: Users,
@@ -163,6 +189,21 @@ const Index = () => {
     // Client role
     return [
       ...baseCards,
+      {
+        title: "ML Payroll PRO Virtual Walkthrough",
+        icon: Play,
+        onClick: () => setShowVideoWalkthrough(true),
+      },
+      {
+        title: "Check Meeting Schedules",
+        icon: Calendar,
+        onClick: () => setShowMeetings(true),
+      },
+      {
+        title: "Track Referral Status",
+        icon: Users,
+        onClick: () => setShowReferralStatus(true),
+      },
       {
         title: "ML Payroll PRO Virtual Walkthrough",
         icon: Play,
@@ -277,7 +318,7 @@ const Index = () => {
 
           {/* MEETING SCHEDULES*/}
           <Dialog open={showMeetings} onOpenChange={setShowMeetings}>
-  <DialogContent className="w-full max-w-[95vw] sm:max-w-lg md:max-w-2xl lg:max-w-4xl h-auto max-h-screen p-4">
+  <DialogContent className="w-full max-w-[95vw] sm:max-w-lg    lg:max-w-4xl h-auto max-h-screen p-4">
     <div className="h-full max-h-[80vh] overflow-y-auto">
       <MeetingSchedules userRole={"main_admin"} />
     </div>
@@ -285,19 +326,18 @@ const Index = () => {
 </Dialog>
 
 
-
           {(userRole === "main_admin" || userRole === "second_admin" || userRole === "client") && (
-  <Dialog open={showReferralStatus} onOpenChange={setShowReferralStatus}>
-    <DialogContent className="w-full max-w-[95vw] sm:max-w-xl md:max-w-2xl lg:max-w-4xl h-auto max-h-screen p-4">
-      <DialogHeader>
-        <DialogTitle className="text-center text-2xl sm:text-3xl">
-          Track Referral Status
-        </DialogTitle>
-      </DialogHeader>
-      <ReferralStatus />
-    </DialogContent>
-  </Dialog>
-)}
+          <Dialog open={showReferralStatus} onOpenChange={setShowReferralStatus}>
+            <DialogContent className="w-full max-w-[95vw] sm:max-w-xl md:max-w-2xl lg:max-w-4xl h-auto max-h-screen p-4">
+              <DialogHeader>
+                <DialogTitle className="text-center text-2xl sm:text-3xl">
+                  Track Referral Status
+                </DialogTitle>
+              </DialogHeader>
+              <ReferralStatus />
+            </DialogContent>
+          </Dialog>
+        )}
 
 
          {(userRole === "main_admin" || userRole === "second_admin" || userRole === "client") && (

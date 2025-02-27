@@ -92,9 +92,9 @@ export const MeetingSchedules = ({ userRole }: { userRole: "main_admin" | "secon
           if (newStatus === "Confirmed") {
             toastMessage = "Meeting has been confirmed by the SPBDD.";
             updatedMeeting.status = "Confirmed";
-          } else if (newStatus === "Rescheduled") {
-            toastMessage = "Meeting has been marked for rescheduling.";
-            updatedMeeting.status = "Rescheduled";
+         // } else if (newStatus === "Rescheduled") {
+          //  toastMessage = "Meeting has been marked for rescheduling.";
+           // updatedMeeting.status = "Rescheduled";
           }
         }
 

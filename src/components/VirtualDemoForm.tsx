@@ -42,6 +42,7 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
     teamEmails: "",
     payrollStatus: "",
     otherPayrollStatus: "",
+    employeeNumber: "",
     status: "Pending"
   });
 
@@ -113,6 +114,18 @@ export const VirtualDemoForm = ({ onClose, userRole = "client" }: { onClose: () 
             </SelectContent>
           </Select>
         </div>
+
+        <div>
+          <Label htmlFor="companyName">Maximum number of employees</Label>
+          <Input
+            id="employeeNumber"
+            value={formData.employeeNumber}
+            onChange={handleChange("employeeNumber")}
+            required
+            className="w-full"
+          />
+        </div>
+        
         {formData.payrollStatus === "Others" && (
           <div>
             <Label htmlFor="otherPayrollStatus">Please specify other status</Label>

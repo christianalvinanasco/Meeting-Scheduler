@@ -1,17 +1,5 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -142,7 +130,7 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
           placeholder="Search Company Name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="h-8"
+          className="h-8 w-40 sm:w-52 md:w-64 lg:w-80"
         />
         <div>
           <Select
@@ -170,6 +158,8 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
             <TableHead>Company Name</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Date Onboarded</TableHead>
+            <TableHead>Date Started</TableHead>
+            <TableHead>Actions</TableHead>
             {userRole === "main_admin" && <TableHead />}
           </TableRow>
         </TableHeader>
@@ -248,6 +238,7 @@ export const StatusTable = ({ userRole }: StatusTableProps) => {
                 )}
               </TableCell>
               <TableCell>{company.dateOnboarded}</TableCell>
+              <TableCell>{company.dateStarted}</TableCell>
               {userRole === "main_admin" && (
                 <TableCell>
                   <Button
